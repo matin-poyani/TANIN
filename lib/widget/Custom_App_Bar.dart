@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tanin/screen/Search_screen.dart';
 import '../models/color_style.dart';
-import '../screen/music_search_screen.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -15,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MusicSearchPage()),
+              MaterialPageRoute(builder: (context) => SearchScreen()),
             );
           },
         )

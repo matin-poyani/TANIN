@@ -46,7 +46,7 @@ class MusicController extends GetxController {
 
   void pauseMusic() async {
     await audioPlayer.pause();
-   isPlaying.value = false;
+    isPlaying.value = false;
   }
 
   void stopMusic() async {
@@ -58,11 +58,12 @@ class MusicController extends GetxController {
 
   void setCurrentTrack(MusicTrack track) {
     currentTrack.value = track;
+    playMusic(track.downloadMusics.first.musicUrlLink); // Play the new track
   }
 
   void togglePlayPause() async {
     if (isPlaying.value) {
-        pauseMusic();
+      pauseMusic();
     } else {
       await playMusic(currentTrack.value!.downloadMusics.first.musicUrlLink, seekToCurrentPosition: true);
     }

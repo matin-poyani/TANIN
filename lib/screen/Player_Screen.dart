@@ -4,11 +4,11 @@ import '../controllers/music_controller.dart';
 import '../models/music_track.dart';
 import '../models/color_style.dart';
 
-class SelectedMusicPage extends StatelessWidget {
+class PlayerScreen extends StatelessWidget {
   final MusicTrack musicTrack;
   final MusicController controller = Get.put(MusicController());
 
-  SelectedMusicPage({Key? key, required this.musicTrack}) : super(key: key);
+  PlayerScreen({super.key, required this.musicTrack});
 
   @override
   Widget build(BuildContext context) {

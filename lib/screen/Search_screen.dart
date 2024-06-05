@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tanin/models/color_style.dart';
-import 'package:tanin/screen/SelectedMusicPage.dart';
-import '../services/api_service.dart';
+import '../controllers/music_controller.dart';
 import '../models/music_track.dart';
+import '../models/color_style.dart';
+import '../services/api_service.dart';
+import 'Player_Screen.dart';
 
-class MusicSearchPage extends StatelessWidget {
+class SearchScreen extends StatelessWidget {
   final MusicApiService controller = Get.put(MusicApiService());
+  final MusicController musicController = Get.put(MusicController()); // Ensure the MusicController is available
   final ColorStyle colorStyle = const ColorStyle();
 
-  MusicSearchPage({super.key});
+  SearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +95,8 @@ class MusicSearchPage extends StatelessWidget {
                                 (track) => track.title == suggestion,
                               );
                               if (selectedTrack != null) {
-                                Get.to(() => SelectedMusicPage(musicTrack: selectedTrack));
+                                musicController.setCurrentTrack(selectedTrack);
+                                Get.to(() => PlayerScreen(musicTrack: selectedTrack));
                               }
                             },
                           );
@@ -141,7 +144,8 @@ class MusicSearchPage extends StatelessWidget {
                       return ListTile(
                         title: Text(track.title, style: const TextStyle(color: Colors.white)),
                         onTap: () {
-                          Get.to(() => SelectedMusicPage(musicTrack: track));
+                          musicController.setCurrentTrack(track);
+                          Get.to(() => PlayerScreen(musicTrack: track));
                         },
                       );
                     },

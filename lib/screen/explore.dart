@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tanin/models/color_style.dart';
 import '../widget/bottom_nav_bar.dart';
-import 'Music_Search_screen.dart';
+import 'Search_screen.dart';
 
 class Explorer extends StatelessWidget {
   const Explorer({super.key});
@@ -21,7 +21,7 @@ class Explorer extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                Get.to(MusicSearchPage());
+                Get.to(SearchScreen());
               },
             )
           ],

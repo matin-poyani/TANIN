@@ -1,71 +1,59 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tanin/models/color_style.dart';
 import '../controllers/music_controller.dart';
-import '../screen/SelectedMusicPage.dart';
+import '../models/color_style.dart';
+import '../screen/Player_Screen.dart'; 
 
-class MiniPlayer extends StatefulWidget {
-  @override
-  _MiniPlayerState createState() => _MiniPlayerState();
-}
+class MiniPlayer extends StatelessWidget {
+  final MusicController controller = Get.find<MusicController>();
 
-class _MiniPlayerState extends State<MiniPlayer> {
-  final MusicController musicController = Get.find<MusicController>();
+  MiniPlayer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (!musicController.isMiniPlayerVisible.value || musicController.currentTrack.value == null) {
-        return const SizedBox.shrink();
+      if (!controller.isMiniPlayerVisible.value || controller.currentTrack.value == null) {
+        return const SizedBox.shrink(); // Return an empty widget if mini player should not be visible
       }
-
-      return InkWell(
+      return GestureDetector(
         onTap: () {
-          Get.to(() => SelectedMusicPage(musicTrack: musicController.currentTrack.value!));
+          Get.to(() => PlayerScreen(musicTrack: controller.currentTrack.value!));
         },
         child: Container(
-          color: const ColorStyle().colorGray,
+          color: const Color(0xFF333333), // Mini player background color
+          padding: const EdgeInsets.all(8.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: musicController.currentTrack.value!.musicPoster,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
-                    width: 50.0,
-                    height: 50.0,
+              Row(
+                children: [
+                  Image.network(
+                    controller.currentTrack.value!.musicPoster,
+                    height: 50,
+                    width: 50,
                     fit: BoxFit.cover,
                   ),
-                ),
-                title: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        musicController.currentTrack.value!.title,
-                        style: const TextStyle(color: Colors.white, fontSize: 14.0),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      controller.currentTrack.value!.title,
+                      style: const TextStyle(color: Colors.white),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Obx(() => IconButton(
-                      icon: Icon(
-                        musicController.isPlaying.value ? Icons.pause : Icons.play_circle_filled,
-                        color: const ColorStyle().colorYellow,
-                        size: 32.0,
-                      ),
-                      onPressed: musicController.togglePlayPause,
-                    )),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white, size: 20.0),
-                      onPressed: () {
-                        musicController.isMiniPlayerVisible.value = false;
-                        musicController.stopMusic();
-                      },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      controller.isPlaying.value ? Icons.pause : Icons.play_arrow,
+                      color: Colors.white,
                     ),
-                  ],
-                ),
+                    onPressed: controller.togglePlayPause,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () {
+                      controller.stopMusic();
+                    },
+                  ),
+                ],
               ),
               Obx(() {
                 return SizedBox(
@@ -78,13 +66,15 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     ),
                     child: Slider(
                       min: 0.0,
-                      max: musicController.totalDuration.value.inMilliseconds.toDouble(),
+                      max: controller.totalDuration.value.inMilliseconds.toDouble(),
                       activeColor: const ColorStyle().colorYellow,
                       inactiveColor: Colors.grey,
-                      value: musicController.currentPosition.value.inMilliseconds.toDouble().clamp(0.0, musicController.totalDuration.value.inMilliseconds.toDouble()),
+                      value: controller.currentPosition.value.inMilliseconds
+                          .toDouble()
+                          .clamp(0.0, controller.totalDuration.value.inMilliseconds.toDouble()),
                       onChanged: (value) {
                         final position = Duration(milliseconds: value.toInt());
-                        musicController.seekTo(position);
+                        controller.seekTo(position);
                       },
                     ),
                   ),
