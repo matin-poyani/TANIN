@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:tanin/models/color_style.dart';
-import 'package:tanin/widget/Custom_App_Bar.dart'; // Import your CustomAppBar widget
-import '../widget/bottom_nav_bar.dart';
+import '../widget/custom_app_bar.dart'; // Import your CustomAppBar widget
 import '../widget/mini_player.dart';
 
-class Profile extends StatefulWidget {
-  const Profile({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const ColorStyle().colorDark,
       appBar: AppBar(
-        actions: [
+        actions: const [
           CustomAppBar(), // Remove the 'const' keyword here
         ],
       ),
-      bottomNavigationBar: BottomNavBar(),
-      bottomSheet: MiniPlayer(),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -66,6 +63,7 @@ class _ProfileState extends State<Profile> {
           // Other children widgets...
         ],
       ),
+      bottomSheet: MiniPlayer(),
     );
   }
 }

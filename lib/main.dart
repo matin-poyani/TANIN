@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'screen/home_screen.dart';
+
+import 'widget/bottom_nav_bar.dart';
 
 void main() {
-  runApp(MusicApp());
+  runApp(const MusicApp());
 }
 
 class MusicApp extends StatelessWidget {
+  const MusicApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home:  HomeScreen(),
+      home: BottomNavBar(),
     );
   }
 }

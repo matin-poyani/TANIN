@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tanin/models/color_style.dart';
-import '../widget/bottom_nav_bar.dart';
+import '../models/color_style.dart';
+import '../widget/mini_player.dart';
 import 'Search_screen.dart';
 
-class Explorer extends StatelessWidget {
-  const Explorer({super.key});
+class ExploreScreen extends StatelessWidget {
+  const ExploreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Fetch or generate content
     List<Post> posts = fetchPosts();
 
     return Scaffold(
       backgroundColor: const ColorStyle().colorDark,
-      appBar: AppBar(  title: const Text('TANIN', style: TextStyle(color: Colors.yellow)),
-          iconTheme: const IconThemeData(color: Colors.yellow),
-          backgroundColor: const ColorStyle().colorDark,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                Get.to(SearchScreen());
-              },
-            )
-          ],
-        ),
-      bottomNavigationBar:   BottomNavBar(),
+      appBar: AppBar(
+        title: const Text('TANIN', style: TextStyle(color: Colors.yellow)),
+        iconTheme: const IconThemeData(color: Colors.yellow),
+        backgroundColor: const ColorStyle().colorDark,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Get.to(SearchScreen());
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: GridView.builder(
@@ -40,7 +39,6 @@ class Explorer extends StatelessWidget {
             Post post = posts[index];
             return GestureDetector(
               onTap: () {
-                // Navigate to post details screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -56,7 +54,6 @@ class Explorer extends StatelessWidget {
                       post.imageUrl,
                       fit: BoxFit.cover,
                     ),
-                    //caption post explorer
                     Positioned(
                       top: 150,
                       left: 8,
@@ -84,6 +81,7 @@ class Explorer extends StatelessWidget {
           },
         ),
       ),
+      bottomSheet: MiniPlayer(),
     );
   }
 }
@@ -106,7 +104,6 @@ class PostDetailsScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           Text(post.caption),
-          // Other post details like likes, comments, etc.
         ],
       ),
     );
@@ -120,53 +117,14 @@ class Post {
   Post({required this.imageUrl, required this.caption});
 }
 
-// Fetch or generate dummy posts
 List<Post> fetchPosts() {
   return [
     Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-20_18-00-04.jpg',
+      imageUrl: 'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-20_18-00-04.jpg',
       caption: 'This is the caption for post 1',
     ),
     Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-27_15-34-09.jpg',
-      caption: 'This is the caption for post 2',
-    ),
-
-    Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-20_18-00-04.jpg',
-      caption: 'This is the caption for post 2',
-    ),
-
-    Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-27_15-34-09.jpg',
-      caption: 'This is the caption for post 2',
-    ),
-
-    Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-20_18-00-04.jpg',
-      caption: 'This is the caption for post 2',
-    ),
-
-    Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-20_18-00-04.jpg',
-      caption: 'This is the caption for post 2',
-    ),
-
-    Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-20_18-00-04.jpg',
-      caption: 'This is the caption for post 2',
-    ),
-
-    Post(
-      imageUrl:
-          'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-20_18-00-04.jpg',
+      imageUrl: 'https://upmusics.com/wp-content/uploads/2023/12/photo_2023-12-27_15-34-09.jpg',
       caption: 'This is the caption for post 2',
     ),
     // Add more posts...

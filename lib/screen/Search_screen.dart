@@ -10,7 +10,6 @@ class SearchScreen extends StatelessWidget {
   final MusicApiService controller = Get.put(MusicApiService());
   final MusicController musicController = Get.put(MusicController()); // Ensure the MusicController is available
   final ColorStyle colorStyle = const ColorStyle();
-
   SearchScreen({super.key});
 
   @override
