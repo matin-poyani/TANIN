@@ -49,6 +49,65 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.19"
+<<<<<<< HEAD
+=======
+  audioplayers:
+    dependency: "direct main"
+    description:
+      name: audioplayers
+      sha256: "752039d6aa752597c98ec212e9759519061759e402e7da59a511f39d43aa07d2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
+  audioplayers_android:
+    dependency: transitive
+    description:
+      name: audioplayers_android
+      sha256: de576b890befe27175c2f511ba8b742bec83765fa97c3ce4282bba46212f58e4
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  audioplayers_darwin:
+    dependency: transitive
+    description:
+      name: audioplayers_darwin
+      sha256: e507887f3ff18d8e5a10a668d7bedc28206b12e10b98347797257c6ae1019c3b
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
+  audioplayers_linux:
+    dependency: transitive
+    description:
+      name: audioplayers_linux
+      sha256: "3d3d244c90436115417f170426ce768856d8fe4dfc5ed66a049d2890acfa82f9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
+  audioplayers_platform_interface:
+    dependency: transitive
+    description:
+      name: audioplayers_platform_interface
+      sha256: "6834dd48dfb7bc6c2404998ebdd161f79cd3774a7e6779e1348d54a3bfdcfaa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
+  audioplayers_web:
+    dependency: transitive
+    description:
+      name: audioplayers_web
+      sha256: db8fc420dadf80da18e2286c18e746fb4c3b2c5adbf0c963299dde046828886d
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  audioplayers_windows:
+    dependency: transitive
+    description:
+      name: audioplayers_windows
+      sha256: "8605762dddba992138d476f6a0c3afd9df30ac5b96039929063eceed416795c2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   boolean_selector:
     dependency: transitive
     description:
@@ -153,6 +212,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.10"
+<<<<<<< HEAD
   dio:
     dependency: "direct main"
     description:
@@ -161,6 +221,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.3+1"
+=======
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   fake_async:
     dependency: transitive
     description:
@@ -368,6 +430,17 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
+<<<<<<< HEAD
+=======
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   nm:
     dependency: transitive
     description:
@@ -412,10 +485,17 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
+<<<<<<< HEAD
       sha256: bca87b0165ffd7cdb9cad8edd22d18d2201e886d9a9f19b4fb3452ea7df3a72a
       url: "https://pub.dev"
     source: hosted
     version: "2.2.6"
+=======
+      sha256: "9c96da072b421e98183f9ea7464898428e764bc0ce5567f27ec8693442e72514"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.5"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   path_provider_foundation:
     dependency: transitive
     description:
@@ -460,18 +540,32 @@ packages:
     dependency: transitive
     description:
       name: permission_handler_android
+<<<<<<< HEAD
       sha256: b29a799ca03be9f999aa6c39f7de5209482d638e6f857f6b93b0875c618b7e54
       url: "https://pub.dev"
     source: hosted
     version: "12.0.7"
+=======
+      sha256: "8bb852cd759488893805c3161d0b2b5db55db52f773dbb014420b304055ba2c5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.0.6"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   permission_handler_apple:
     dependency: transitive
     description:
       name: permission_handler_apple
+<<<<<<< HEAD
       sha256: e6f6d73b12438ef13e648c4ae56bd106ec60d17e90a59c4545db6781229082a0
       url: "https://pub.dev"
     source: hosted
     version: "9.4.5"
+=======
+      sha256: e9ad66020b89ff1b63908f247c2c6f931c6e62699b756ef8b3c4569350cd8662
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.4.4"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   permission_handler_html:
     dependency: transitive
     description:
@@ -508,10 +602,17 @@ packages:
     dependency: transitive
     description:
       name: platform
+<<<<<<< HEAD
       sha256: "9b71283fc13df574056616011fb138fd3b793ea47cc509c189a6c3fa5f8a1a65"
       url: "https://pub.dev"
     source: hosted
     version: "3.1.5"
+=======
+      sha256: "12220bb4b65720483f8fa9450b4332347737cf8213dd2840d8b2c823e47243ec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.4"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -520,6 +621,17 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+<<<<<<< HEAD
+=======
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.2"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   rxdart:
     dependency: transitive
     description:
@@ -625,10 +737,17 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
+<<<<<<< HEAD
       sha256: "21b704ce5fa560ea9f3b525b43601c678728ba46725bab9b01187b4831377ed3"
       url: "https://pub.dev"
     source: hosted
     version: "6.3.0"
+=======
+      sha256: "6ce1e04375be4eed30548f10a315826fd933c1e493206eab82eed01f438c8d2e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.6"
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   url_launcher_android:
     dependency: transitive
     description:

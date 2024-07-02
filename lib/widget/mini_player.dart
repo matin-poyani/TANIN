@@ -23,7 +23,10 @@ class MiniPlayer extends StatelessWidget {
           color: const Color(0xFF333333), // Mini player background color
           padding: const EdgeInsets.all(8.0),
           child: Column(
+<<<<<<< HEAD
             mainAxisSize: MainAxisSize.min,
+=======
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
             children: [
               Row(
                 children: [

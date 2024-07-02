@@ -1,11 +1,20 @@
 {
+<<<<<<< HEAD
     "name": "taninnew",
     "short_name": "taninnew",
+=======
+    "name": "tanin",
+    "short_name": "tanin",
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
+<<<<<<< HEAD
     "description": "music",
+=======
+    "description": "muisc",
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -6,6 +6,7 @@ class MusicTrack with ChangeNotifier {
   final String onvanMusic;
   final String description;
   String musicPoster;
+<<<<<<< HEAD
   final String timeErsal;
   final int bazdid;
   final List<DownloadMusic> downloadMusics;
@@ -14,6 +15,12 @@ class MusicTrack with ChangeNotifier {
   // Category fields
   final int categoryId;
   final String categoryName;
+=======
+  final int categoryId;
+  final String timeErsal;
+  final int bazdid;
+  final List<DownloadMusic> downloadMusics;
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
 
   MusicTrack({
     required this.musicId,
@@ -21,12 +28,19 @@ class MusicTrack with ChangeNotifier {
     required this.onvanMusic,
     required this.description,
     required this.musicPoster,
+<<<<<<< HEAD
     required this.timeErsal,
     required this.bazdid,
     required this.downloadMusics,
       // Category fields
     required this.categoryId,
     required this.categoryName,
+=======
+    required this.categoryId,
+    required this.timeErsal,
+    required this.bazdid,
+    required this.downloadMusics,
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
   });
 
   factory MusicTrack.fromJson(Map<String, dynamic> json) {
@@ -36,13 +50,22 @@ class MusicTrack with ChangeNotifier {
       onvanMusic: json['OnvanMusic'] ?? '',
       description: json['Description'] ?? '',
       musicPoster: json['MusicPoster'] ?? '',
+<<<<<<< HEAD
+=======
+      categoryId: json['CategoryId'] ?? 0,
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
       timeErsal: json['TimeErsal'] ?? '',
       bazdid: json['Bazdid'] ?? 0,
       downloadMusics: (json['DownloadMusics'] as List<dynamic>?)
           ?.map((downloadJson) => DownloadMusic.fromJson(downloadJson))
+<<<<<<< HEAD
           .toList() ?? [],
       categoryId: json['CateId'] ?? 0,
       categoryName: json['Name'] ?? '',
+=======
+          .toList() ??
+          [],
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
     );
   }
 
@@ -50,6 +73,7 @@ class MusicTrack with ChangeNotifier {
     musicPoster = newPoster;
     notifyListeners();
   }
+<<<<<<< HEAD
 
   @override
   bool operator ==(Object other) {
@@ -60,6 +84,8 @@ class MusicTrack with ChangeNotifier {
 
   @override
   int get hashCode => musicId.hashCode;
+=======
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
 }
 
 class DownloadMusic {

@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+=======
+>>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
     <application
         android:label="tanin"
         android:name="${applicationName}"
