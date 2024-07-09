@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:tanin/models/download_music.dart';
 
 class MusicTrack with ChangeNotifier {
   final int musicId;
@@ -110,37 +111,5 @@ class MusicTrack with ChangeNotifier {
 
   @override
   int get hashCode => musicId.hashCode;
-}
-
-class DownloadMusic {
-  final int downloadId;
-  final String musicUrlLink;
-  final String onvanMusicDl;
-  final int musicId;
-
-  DownloadMusic({
-    required this.downloadId,
-    required this.musicUrlLink,
-    required this.onvanMusicDl,
-    required this.musicId,
-  });
-
-  factory DownloadMusic.fromJson(Map<String, dynamic> json) {
-    return DownloadMusic(
-      downloadId: json['DownloadId'],
-      musicUrlLink: json['MusicUrlLink'],
-      onvanMusicDl: json['OnvanMusicDl'],
-      musicId: json['MusicId'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'DownloadId': downloadId,
-      'MusicUrlLink': musicUrlLink,
-      'OnvanMusicDl': onvanMusicDl,
-      'MusicId': musicId,
-    };
-  }
 }
 
