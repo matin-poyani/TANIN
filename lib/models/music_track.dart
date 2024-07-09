@@ -9,11 +9,10 @@ class MusicTrack with ChangeNotifier {
   final String timeErsal;
   final int bazdid;
   final List<DownloadMusic> downloadMusics;
-  bool downloaded = false; // New property
-  
-  // Category fields
+  bool downloaded;
   final int categoryId;
   final String categoryName;
+  final String localPath;
 
   MusicTrack({
     required this.musicId,
@@ -24,9 +23,10 @@ class MusicTrack with ChangeNotifier {
     required this.timeErsal,
     required this.bazdid,
     required this.downloadMusics,
-      // Category fields
     required this.categoryId,
     required this.categoryName,
+    this.downloaded = false,
+    required this.localPath,
   });
 
   factory MusicTrack.fromJson(Map<String, dynamic> json) {
@@ -39,16 +39,66 @@ class MusicTrack with ChangeNotifier {
       timeErsal: json['TimeErsal'] ?? '',
       bazdid: json['Bazdid'] ?? 0,
       downloadMusics: (json['DownloadMusics'] as List<dynamic>?)
-          ?.map((downloadJson) => DownloadMusic.fromJson(downloadJson))
-          .toList() ?? [],
+              ?.map((downloadJson) => DownloadMusic.fromJson(downloadJson))
+              .toList() ??
+          [],
       categoryId: json['CateId'] ?? 0,
       categoryName: json['Name'] ?? '',
+      downloaded: json['downloaded'] ?? false,
+      localPath: json['localPath'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'MusicId': musicId,
+      'Title': title,
+      'OnvanMusic': onvanMusic,
+      'Description': description,
+      'MusicPoster': musicPoster,
+      'TimeErsal': timeErsal,
+      'Bazdid': bazdid,
+      'DownloadMusics': downloadMusics.map((e) => e.toJson()).toList(),
+      'CateId': categoryId,
+      'Name': categoryName,
+      'downloaded': downloaded,
+      'localPath': localPath,
+    };
   }
 
   void updateMusicPoster(String newPoster) {
     musicPoster = newPoster;
     notifyListeners();
+  }
+
+  MusicTrack copyWith({
+    int? musicId,
+    String? title,
+    String? onvanMusic,
+    String? description,
+    String? musicPoster,
+    String? timeErsal,
+    int? bazdid,
+    List<DownloadMusic>? downloadMusics,
+    bool? downloaded,
+    int? categoryId,
+    String? categoryName,
+    String? localPath,
+  }) {
+    return MusicTrack(
+      musicId: musicId ?? this.musicId,
+      title: title ?? this.title,
+      onvanMusic: onvanMusic ?? this.onvanMusic,
+      description: description ?? this.description,
+      musicPoster: musicPoster ?? this.musicPoster,
+      timeErsal: timeErsal ?? this.timeErsal,
+      bazdid: bazdid ?? this.bazdid,
+      downloadMusics: downloadMusics ?? this.downloadMusics,
+      downloaded: downloaded ?? this.downloaded,
+      categoryId: categoryId ?? this.categoryId,
+      categoryName: categoryName ?? this.categoryName,
+      localPath: localPath ?? this.localPath,
+    );
   }
 
   @override
@@ -83,4 +133,14 @@ class DownloadMusic {
       musicId: json['MusicId'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'DownloadId': downloadId,
+      'MusicUrlLink': musicUrlLink,
+      'OnvanMusicDl': onvanMusicDl,
+      'MusicId': musicId,
+    };
+  }
 }
+

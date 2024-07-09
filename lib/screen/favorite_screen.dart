@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tanin/models/color_style.dart';
-import '../controllers/music_controller.dart';
+import '../controllers/favorites_controller.dart';
 import 'player_screen.dart';
+import '../models/music_track.dart';
 
-// ignore: must_be_immutable
 class FavoriteScreen extends StatelessWidget {
-  final MusicController controller = Get.put(MusicController());
+  // استفاده از Get.find برای پیدا کردن کنترلر و از Get.put برای ایجاد آن
+  final FavoritesController controller = Get.put(FavoritesController()); 
   final TextEditingController searchController = TextEditingController();
-  var filteredPlaylists = [].obs;
+  var filteredPlaylists = <MusicTrack>[].obs;
 
   FavoriteScreen({super.key}) {
-    filteredPlaylists.value = controller.favoriteTracks;
+    filteredPlaylists.value = controller.favorites;
     searchController.addListener(_filterPlaylists);
   }
 
   void _filterPlaylists() {
     String query = searchController.text.toLowerCase();
     if (query.isEmpty) {
-      filteredPlaylists.value = controller.favoriteTracks;
+      filteredPlaylists.value = controller.favorites;
     } else {
-      filteredPlaylists.value = controller.favoriteTracks.where((track) {
+      filteredPlaylists.value = controller.favorites.where((track) {
         return track.description.toLowerCase().contains(query) ||
                track.title.toLowerCase().contains(query);
       }).toList();
@@ -32,7 +33,7 @@ class FavoriteScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Playlist'),
-        centerTitle: true,  // تنظیم مرکزیت عنوان
+        centerTitle: true,
         backgroundColor: const ColorStyle().colorDark,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -72,8 +73,18 @@ class FavoriteScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: GestureDetector(
                       onTap: () {
-                        controller.setCurrentTrack(track);
-                        Get.to(() => PlayerScreen(musicTrack: track));
+                        if (track.downloaded && track.localPath != null) {
+                          controller.playMusic(track.localPath!);
+                          Get.to(() => PlayerScreen(musicTrack: track));
+                        } else {
+                          Get.snackbar(
+                            'Error',
+                            'Music not available for playback',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        }
                       },
                       child: Row(
                         children: [
@@ -115,7 +126,7 @@ class FavoriteScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  track.toString() == 'null' ? 'Unknown Artist' : track.title,
+                                  track.title,
                                   style: const TextStyle(color: Colors.grey, fontSize: 14),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -125,10 +136,10 @@ class FavoriteScreen extends StatelessWidget {
                           const SizedBox(width: 16),
                           PopupMenuButton<String>(
                             icon: const Icon(Icons.more_vert, color: Colors.white),
-                            onSelected: (String value) {
+                            onSelected: (String value) async {
                               switch (value) {
                                 case 'delete':
-                                  controller.favoriteTracks.remove(track);
+                                  controller.removeFavorite(track.musicId);
                                   filteredPlaylists.remove(track);
                                   Get.snackbar(
                                     'Deleted',
@@ -139,7 +150,8 @@ class FavoriteScreen extends StatelessWidget {
                                   );
                                   break;
                                 case 'download':
-                                  // Implement download functionality here
+                                  controller.addFavoriteMusic(track);
+                                  filteredPlaylists.refresh();
                                   Get.snackbar(
                                     'Download',
                                     'Downloading ${track.title}',
@@ -149,7 +161,6 @@ class FavoriteScreen extends StatelessWidget {
                                   );
                                   break;
                                 case 'share':
-                                  // Implement share functionality here
                                   Get.snackbar(
                                     'Share',
                                     'Sharing ${track.title}',

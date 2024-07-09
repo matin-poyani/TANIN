@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tanin/controllers/favorites_controller.dart';
 import '../controllers/music_controller.dart';
 import '../models/music_track.dart';
 import '../models/color_style.dart';
@@ -7,6 +8,7 @@ import '../models/color_style.dart';
 class PlayerScreen extends StatelessWidget {
   final MusicTrack musicTrack;
   final MusicController controller = Get.put(MusicController());
+  final FavoritesController favoritesController = Get.put(FavoritesController());
 
   PlayerScreen({super.key, required this.musicTrack});
 
@@ -82,11 +84,11 @@ class PlayerScreen extends StatelessWidget {
               children: [
                 Obx(() => IconButton(
                   icon: Icon(
-                    controller.isFavorite.value ? Icons.favorite : Icons.favorite_border_sharp,
-                    color: controller.isFavorite.value ? Colors.red : Colors.white,
+                    favoritesController.isFavorite.value ? Icons.favorite : Icons.favorite_border_sharp,
+                    color: favoritesController.isFavorite.value ? Colors.red : Colors.white,
                   ),
                   onPressed: () {
-                    controller.toggleFavorite(musicTrack);
+                    favoritesController.toggleFavorite(musicTrack);
                   },
                 )),
               ],

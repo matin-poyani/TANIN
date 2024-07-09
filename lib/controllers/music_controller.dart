@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/color_style.dart';
 import '../models/music_track.dart';
 import '../services/api_service.dart';
@@ -29,12 +30,12 @@ class MusicController extends GetxController {
   final MusicApiService musicApiService = Get.put(MusicApiService());
   var categories = <String>[].obs;
 
-
   @override
   void onInit() {
     super.onInit();
     fetchMusicTracks();
     _loadDownloadedTracks();
+    _loadFavoriteTracks();
     audioPlayer.positionStream.listen((position) {
       currentPosition.value = position;
     });
@@ -49,11 +50,10 @@ class MusicController extends GetxController {
     });
   }
 
-
   Future<void> fetchMusicTracks() async {
     try {
       await musicApiService.fetchCategories();
-      var categoryTracks = musicApiService.categoryTracks;  // استفاده از getter عمومی
+      var categoryTracks = musicApiService.categoryTracks; // استفاده از getter عمومی
       musicTracks.assignAll(categoryTracks.values.expand((tracks) => tracks).toList());
       categories.assignAll(musicApiService.categories);
     } catch (e) {
@@ -81,6 +81,14 @@ class MusicController extends GetxController {
       }
     }
   }
+
+  Future<void> _loadFavoriteTracks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoriteTrackIds = prefs.getStringList('favoriteTracks') ?? [];
+    favoriteTracks.value = musicTracks.where((track) => favoriteTrackIds.contains(track.musicId)).toList();
+  }
+
+
 
   Future<void> playMusic(String musicUrlLink, {bool seekToCurrentPosition = false}) async {
     try {
@@ -136,14 +144,7 @@ class MusicController extends GetxController {
     }
   }
 
-  void toggleFavorite(MusicTrack track) {
-    if (favoriteTracks.contains(track)) {
-      favoriteTracks.remove(track);
-    } else {
-      favoriteTracks.add(track);
-    }
-    isFavorite.value = favoriteTracks.contains(track);
-  }
+
 
   void setCurrentTrack(MusicTrack track) {
     print('Setting current track: ${track.title}');
@@ -162,23 +163,36 @@ class MusicController extends GetxController {
     }
   }
 
-  void playNextTrack() async {
-    if (favoriteTracks.isEmpty) return;
-    final currentIndex = favoriteTracks.indexOf(currentTrack.value);
-    final nextIndex = (currentIndex + 1) % favoriteTracks.length;
-    final nextTrack = favoriteTracks[nextIndex];
-    setCurrentTrack(nextTrack);
-    await playMusic(nextTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
-  }
+void playNextTrack() async {
+  final currentCategory = categories.firstWhereOrNull((category) {
+    return musicApiService.getCategoryTracks(category).contains(currentTrack.value);
+  });
 
-  void playPreviousTrack() async {
-    if (favoriteTracks.isEmpty) return;
-    final currentIndex = favoriteTracks.indexOf(currentTrack.value);
-    final previousIndex = (currentIndex - 1 + favoriteTracks.length) % favoriteTracks.length;
-    final previousTrack = favoriteTracks[previousIndex];
-    setCurrentTrack(previousTrack);
-    await playMusic(previousTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
-  }
+  final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
+  final currentIndex = tracks.indexOf(currentTrack.value!);
+  final nextIndex = (currentIndex + 1) % tracks.length;  // Move to next track
+  final nextTrack = tracks[nextIndex];
+
+  setCurrentTrack(nextTrack);
+  await playMusic(nextTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
+}
+
+void playPreviousTrack() async {
+  final currentCategory = categories.firstWhereOrNull((category) {
+    return musicApiService.getCategoryTracks(category).contains(currentTrack.value);
+  });
+
+  final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
+  final currentIndex = tracks.indexOf(currentTrack.value!);
+  final previousIndex = (currentIndex - 1 + tracks.length) % tracks.length;  // Move to previous track
+  final previousTrack = tracks[previousIndex];
+
+  setCurrentTrack(previousTrack);
+  await playMusic(previousTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
+}
+
+
+
 
   void playRandomTrack() async {
     if (musicTracks.isEmpty) {
@@ -196,37 +210,36 @@ class MusicController extends GetxController {
     audioPlayer.seek(position);
   }
 
-void _handleCompletion() {
-  if (isRepeat.value) {
-    print('Repeat mode is on, repeating the current track.');
-    playMusic(currentTrack.value!.downloadMusics.first.musicUrlLink);
-  } else if (isShuffle.value) {
-    print('Shuffle mode is on, playing random track.');
-    print('Total tracks available: ${musicTracks.length}');
-    playRandomTrack();
-  } else {
-    print('Playing next track.');
-    playNextTrack();
-    Future.delayed(const Duration(seconds: 1), () {
-      Get.snackbar(
-        '',
-        '',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const ColorStyle().colorDark,
-        colorText: Colors.yellowAccent,
-        duration: const Duration(seconds: 3),
-        messageText: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-           "",
-            style: TextStyle(color: const ColorStyle().colorYellow, fontSize: 16),
+  void _handleCompletion() {
+    if (isRepeat.value) {
+      print('Repeat mode is on, repeating the current track.');
+      playMusic(currentTrack.value!.downloadMusics.first.musicUrlLink);
+    } else if (isShuffle.value) {
+      print('Shuffle mode is on, playing random track.');
+      print('Total tracks available: ${musicTracks.length}');
+      playRandomTrack();
+    } else {
+      print('Playing next track.');
+      playNextTrack();
+      Future.delayed(const Duration(seconds: 1), () {
+        Get.snackbar(
+          '',
+          '',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const ColorStyle().colorDark,
+          colorText: Colors.yellowAccent,
+          duration: const Duration(seconds: 3),
+          messageText: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              "",
+              style: TextStyle(color: const ColorStyle().colorYellow, fontSize: 16),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      });
+    }
   }
-}
-
 
   void toggleRepeat() {
     isRepeat.value = !isRepeat.value;
@@ -275,6 +288,7 @@ void _handleCompletion() {
   @override
   void onClose() {
     audioPlayer.dispose();
+    musicApiService.clearCache();
     super.onClose();
   }
 
@@ -287,45 +301,45 @@ void _handleCompletion() {
     return downloadDir.path;
   }
 
-Future<void> downloadMusic(String musicUrlLink, String musicId) async {
-  final path = await _getDownloadPath();
-  final filePath = '$path/$musicId.mp3';
-  final file = File(filePath);
+  Future<void> downloadMusic(String musicUrlLink, String musicId) async {
+    final path = await _getDownloadPath();
+    final filePath = '$path/$musicId.mp3';
+    final file = File(filePath);
 
-  if (await file.exists()) {
-    print('Music already downloaded.');
-    return;
+    if (await file.exists()) {
+      print('Music already downloaded.');
+      return;
+    }
+
+    isDownloading.value = true;
+    final client = http.Client();
+    final request = http.Request('GET', Uri.parse(musicUrlLink));
+    final response = await client.send(request);
+    final totalBytes = response.contentLength ?? 0;
+    final bytes = <int>[];
+    int receivedBytes = 0;
+
+    response.stream.listen(
+      (List<int> newBytes) {
+        bytes.addAll(newBytes);
+        receivedBytes += newBytes.length;
+        downloadProgress.value = receivedBytes / totalBytes;
+      },
+      onDone: () async {
+        await file.writeAsBytes(bytes);
+        isDownloading.value = false;
+        downloadProgress.value = 0.0;
+        downloadedTracks.add(musicTracks.firstWhere((track) => track.musicId == musicId));
+        print('Music downloaded to: $filePath');
+      },
+      onError: (e) {
+        isDownloading.value = false;
+        downloadProgress.value = 0.0;
+        print('Download failed: $e');
+      },
+      cancelOnError: true,
+    );
   }
-
-  isDownloading.value = true;
-  final client = http.Client();
-  final request = http.Request('GET', Uri.parse(musicUrlLink));
-  final response = await client.send(request);
-  final totalBytes = response.contentLength ?? 0;
-  final bytes = <int>[];
-  int receivedBytes = 0;
-
-  response.stream.listen(
-    (List<int> newBytes) {
-      bytes.addAll(newBytes);
-      receivedBytes += newBytes.length;
-      downloadProgress.value = receivedBytes / totalBytes;
-    },
-    onDone: () async {
-      await file.writeAsBytes(bytes);
-      isDownloading.value = false;
-      downloadProgress.value = 0.0;
-      downloadedTracks.add(musicTracks.firstWhere((track) => track.musicId == musicId));
-      print('Music downloaded to: $filePath');
-    },
-    onError: (e) {
-      isDownloading.value = false;
-      downloadProgress.value = 0.0;
-      print('Download failed: $e');
-    },
-    cancelOnError: true,
-  );
-}
 
   Future<bool> isDownloaded(MusicTrack track) async {
     final path = await _getDownloadPath();
@@ -333,4 +347,3 @@ Future<void> downloadMusic(String musicUrlLink, String musicId) async {
     return File(filePath).exists();
   }
 }
-

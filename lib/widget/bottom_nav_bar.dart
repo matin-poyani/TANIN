@@ -11,7 +11,7 @@ import 'custom_app_bar.dart';
 class BottomNavBar extends StatelessWidget {
   final BottomNavBarController navigationController = Get.put(BottomNavBarController());
 
-   BottomNavBar({super.key});
+  BottomNavBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +23,12 @@ class BottomNavBar extends StatelessWidget {
           case 0:
             return HomeScreen();
           case 1:
-            return  ExploreScreen();
+            return ExploreScreen();
           case 2:
-            return  AccountScreen();
+            return AccountScreen();
           default:
             return HomeScreen();
         }
-        
       }),
       bottomNavigationBar: Obx(() {
         return BottomNavigationBar(
@@ -37,8 +36,8 @@ class BottomNavBar extends StatelessWidget {
           onTap: (index) {
             navigationController.changeIndex(index);
           },
-           selectedItemColor: const ColorStyle().colorYellow, // رنگ آیتم انتخابی
-          unselectedItemColor: const ColorStyle().colorSilverGray, // رنگ آیتم‌های غیر انتخابی
+          selectedItemColor: const ColorStyle().colorYellow,
+          unselectedItemColor: const ColorStyle().colorSilverGray,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),

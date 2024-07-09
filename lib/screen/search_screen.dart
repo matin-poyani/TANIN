@@ -81,26 +81,27 @@ class SearchScreen extends StatelessWidget {
                         color: Colors.grey[800],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: controller.suggestions.length,
-                        itemBuilder: (context, index) {
-                          String suggestion = controller.suggestions[index];
-                          return ListTile(
-                            title: Text(suggestion, style: const TextStyle(color: Colors.white)),
-                            onTap: () async {
-                              // Find the selected track from the list of music tracks
-                              MusicTrack? selectedTrack = controller.musicTracks.firstWhereOrNull(
-                                (track) => track.title == suggestion,
-                              );
-                              if (selectedTrack != null) {
-                                musicController.setCurrentTrack(selectedTrack);
-                                Get.to(() => PlayerScreen(musicTrack: selectedTrack));
-                              }
-                            },
-                          );
-                        },
-                      ),
+                      //TODO... No work....
+                      // child: ListView.builder(
+                      //   shrinkWrap: true,
+                      //   itemCount: controller.suggestions.length,
+                      //   itemBuilder: (context, index) {
+                      //     String suggestion = controller.suggestions[index];
+                      //     return ListTile(
+                      //       title: Text(suggestion, style: const TextStyle(color: Colors.white)),
+                      //       onTap: () async {
+                      //         // Find the selected track from the list of music tracks
+                      //         MusicTrack? selectedTrack = controller.musicTracks.firstWhereOrNull(
+                      //           (track) => track.title == suggestion,
+                      //         );
+                      //         if (selectedTrack != null) {
+                      //           musicController.setCurrentTrack(selectedTrack);
+                      //           Get.to(() => PlayerScreen(musicTrack: selectedTrack));
+                      //         }
+                      //       },
+                      //     );
+                      //   },
+                      // ),
                     );
                   }),
                 ],

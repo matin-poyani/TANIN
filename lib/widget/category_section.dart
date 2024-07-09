@@ -79,7 +79,7 @@ class CategoryAlbumsSection extends StatelessWidget {
                                   fit: StackFit.expand,
                                   children: [
                                     CachedNetworkImage(
-                                      imageUrl: track.musicPoster ?? '',
+                                      imageUrl: track.musicPoster ?? 'Unknown Image Music',
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) => const Center(
                                         child: CircularProgressIndicator(),
