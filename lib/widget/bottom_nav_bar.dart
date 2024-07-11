@@ -25,7 +25,7 @@ class BottomNavBar extends StatelessWidget {
           case 1:
             return ExploreScreen();
           case 2:
-            return AccountScreen();
+            return  AccountScreen();
           default:
             return HomeScreen();
         }

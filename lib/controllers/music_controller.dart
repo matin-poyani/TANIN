@@ -1,14 +1,12 @@
-import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/color_style.dart';
 import '../models/music_track.dart';
-import '../services/api_service.dart';
+import '../services/api_categories.dart';
+import '../services/api_explore.dart';
+import '../services/api_tracks.dart';
 
 class MusicController extends GetxController {
   var musicTracks = <MusicTrack>[].obs;
@@ -23,19 +21,15 @@ class MusicController extends GetxController {
   final RxBool isMiniPlayerVisible = true.obs;
   var recentlyPlayedTracks = <MusicTrack>[].obs;
   var favoriteTracks = <MusicTrack>[].obs;
-  var downloadedTracks = <MusicTrack>[].obs;
-  var isDownloading = false.obs;
-  var downloadProgress = 0.0.obs;
-
-  final MusicApiService musicApiService = Get.put(MusicApiService());
+  final ApiCategories apiCategories = Get.put(ApiCategories());
+  final ApiTracks apiTracks = Get.put(ApiTracks());
+  final ApiExplore apiExplore = Get.put(ApiExplore());
   var categories = <String>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchMusicTracks();
-    _loadDownloadedTracks();
-    _loadFavoriteTracks();
     audioPlayer.positionStream.listen((position) {
       currentPosition.value = position;
     });
@@ -52,43 +46,18 @@ class MusicController extends GetxController {
 
   Future<void> fetchMusicTracks() async {
     try {
-      await musicApiService.fetchCategories();
-      var categoryTracks = musicApiService.categoryTracks; // استفاده از getter عمومی
+      await apiCategories.fetchCategories();
+      var categoryTracks = apiTracks.categoryTracks; // استفاده از getter عمومی
       musicTracks.assignAll(categoryTracks.values.expand((tracks) => tracks).toList());
-      categories.assignAll(musicApiService.categories);
+      categories.assignAll(apiCategories.categories);
     } catch (e) {
       print('Error fetching music tracks: $e');
     }
   }
 
   List<MusicTrack> getCategoryTracks(String category) {
-    return musicApiService.getCategoryTracks(category);
+    return apiTracks.getCategoryTracks(category);
   }
-
-  Future<void> _loadDownloadedTracks() async {
-    final path = await _getDownloadPath();
-    final directory = Directory(path);
-    if (await directory.exists()) {
-      final files = directory.listSync().where((item) => item.path.endsWith('.mp3')).toList();
-      for (var file in files) {
-        final musicId = file.uri.pathSegments.last.split('.').first;
-        try {
-          final track = musicTracks.firstWhere((track) => track.musicId == musicId);
-          downloadedTracks.add(track);
-        } catch (e) {
-          print('Track with musicId $musicId not found in musicTracks');
-        }
-      }
-    }
-  }
-
-  Future<void> _loadFavoriteTracks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final favoriteTrackIds = prefs.getStringList('favoriteTracks') ?? [];
-    favoriteTracks.value = musicTracks.where((track) => favoriteTrackIds.contains(track.musicId)).toList();
-  }
-
-
 
   Future<void> playMusic(String musicUrlLink, {bool seekToCurrentPosition = false}) async {
     try {
@@ -107,19 +76,6 @@ class MusicController extends GetxController {
       isFavorite.value = favoriteTracks.contains(currentTrack.value);
     } catch (e) {
       print('Error playing music: $e');
-    }
-  }
-
-  Future<void> playDownloadedMusic(MusicTrack track) async {
-    final path = await _getDownloadPath();
-    final filePath = '$path/${track.musicId}.mp3';
-
-    if (await File(filePath).exists()) {
-      await audioPlayer.setFilePath(filePath);
-      await audioPlayer.play();
-      isPlaying.value = true;
-      isMiniPlayerVisible.value = true;
-      isFavorite.value = favoriteTracks.contains(track);
     }
   }
 
@@ -144,8 +100,6 @@ class MusicController extends GetxController {
     }
   }
 
-
-
   void setCurrentTrack(MusicTrack track) {
     print('Setting current track: ${track.title}');
     currentTrack.value = track;
@@ -163,36 +117,33 @@ class MusicController extends GetxController {
     }
   }
 
-void playNextTrack() async {
-  final currentCategory = categories.firstWhereOrNull((category) {
-    return musicApiService.getCategoryTracks(category).contains(currentTrack.value);
-  });
+  void playNextTrack() async {
+    final currentCategory = categories.firstWhereOrNull((category) {
+      return apiTracks.getCategoryTracks(category).contains(currentTrack.value);
+    });
 
-  final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
-  final currentIndex = tracks.indexOf(currentTrack.value!);
-  final nextIndex = (currentIndex + 1) % tracks.length;  // Move to next track
-  final nextTrack = tracks[nextIndex];
+    final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
+    final currentIndex = tracks.indexOf(currentTrack.value!);
+    final nextIndex = (currentIndex + 1) % tracks.length;  // Move to next track
+    final nextTrack = tracks[nextIndex];
 
-  setCurrentTrack(nextTrack);
-  await playMusic(nextTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
-}
+    setCurrentTrack(nextTrack);
+    await playMusic(nextTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
+  }
 
-void playPreviousTrack() async {
-  final currentCategory = categories.firstWhereOrNull((category) {
-    return musicApiService.getCategoryTracks(category).contains(currentTrack.value);
-  });
+  void playPreviousTrack() async {
+    final currentCategory = categories.firstWhereOrNull((category) {
+      return apiTracks.getCategoryTracks(category).contains(currentTrack.value);
+    });
 
-  final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
-  final currentIndex = tracks.indexOf(currentTrack.value!);
-  final previousIndex = (currentIndex - 1 + tracks.length) % tracks.length;  // Move to previous track
-  final previousTrack = tracks[previousIndex];
+    final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
+    final currentIndex = tracks.indexOf(currentTrack.value!);
+    final previousIndex = (currentIndex - 1 + tracks.length) % tracks.length;  // Move to previous track
+    final previousTrack = tracks[previousIndex];
 
-  setCurrentTrack(previousTrack);
-  await playMusic(previousTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
-}
-
-
-
+    setCurrentTrack(previousTrack);
+    await playMusic(previousTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
+  }
 
   void playRandomTrack() async {
     if (musicTracks.isEmpty) {
@@ -221,23 +172,6 @@ void playPreviousTrack() async {
     } else {
       print('Playing next track.');
       playNextTrack();
-      Future.delayed(const Duration(seconds: 1), () {
-        Get.snackbar(
-          '',
-          '',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const ColorStyle().colorDark,
-          colorText: Colors.yellowAccent,
-          duration: const Duration(seconds: 3),
-          messageText: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              "",
-              style: TextStyle(color: const ColorStyle().colorYellow, fontSize: 16),
-            ),
-          ),
-        );
-      });
     }
   }
 
@@ -288,62 +222,7 @@ void playPreviousTrack() async {
   @override
   void onClose() {
     audioPlayer.dispose();
-    musicApiService.clearCache();
+    apiTracks.clearCache();
     super.onClose();
-  }
-
-  Future<String> _getDownloadPath() async {
-    final directory = await getExternalStorageDirectory();
-    final downloadDir = Directory('${directory!.parent.parent.parent.parent.path}/Download/TANIN');
-    if (!await downloadDir.exists()) {
-      await downloadDir.create(recursive: true);
-    }
-    return downloadDir.path;
-  }
-
-  Future<void> downloadMusic(String musicUrlLink, String musicId) async {
-    final path = await _getDownloadPath();
-    final filePath = '$path/$musicId.mp3';
-    final file = File(filePath);
-
-    if (await file.exists()) {
-      print('Music already downloaded.');
-      return;
-    }
-
-    isDownloading.value = true;
-    final client = http.Client();
-    final request = http.Request('GET', Uri.parse(musicUrlLink));
-    final response = await client.send(request);
-    final totalBytes = response.contentLength ?? 0;
-    final bytes = <int>[];
-    int receivedBytes = 0;
-
-    response.stream.listen(
-      (List<int> newBytes) {
-        bytes.addAll(newBytes);
-        receivedBytes += newBytes.length;
-        downloadProgress.value = receivedBytes / totalBytes;
-      },
-      onDone: () async {
-        await file.writeAsBytes(bytes);
-        isDownloading.value = false;
-        downloadProgress.value = 0.0;
-        downloadedTracks.add(musicTracks.firstWhere((track) => track.musicId == musicId));
-        print('Music downloaded to: $filePath');
-      },
-      onError: (e) {
-        isDownloading.value = false;
-        downloadProgress.value = 0.0;
-        print('Download failed: $e');
-      },
-      cancelOnError: true,
-    );
-  }
-
-  Future<bool> isDownloaded(MusicTrack track) async {
-    final path = await _getDownloadPath();
-    final filePath = '$path/${track.musicId}.mp3';
-    return File(filePath).exists();
   }
 }

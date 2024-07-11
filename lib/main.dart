@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tanin/services/api_categories.dart';
+import 'package:tanin/services/api_explore.dart';
+import 'package:tanin/services/api_suggestions.dart';
+import 'package:tanin/services/api_tracks.dart';
 import 'controllers/music_controller.dart';
-import 'screen/favorite_screen.dart';
-import 'services/api_service.dart';
 import 'widget/bottom_nav_bar.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(MusicApiService());
+  Get.put(ApiCategories());
+  Get.put(ApiTracks());
+  Get.put(ApiExplore());
+  Get.put(ApiSuggestions());
   Get.put(MusicController());
   runApp(const MyApp());
 }
@@ -21,8 +26,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  final MusicApiService musicApiService = Get.find<MusicApiService>();
-
+   final ApiTracks apiTracks = Get.put(ApiTracks());
   @override
   void initState() {
     super.initState();
@@ -38,7 +42,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
-      musicApiService.clearCache();
+      apiTracks.clearCache();
     }
   }
 
@@ -49,8 +53,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: ThemeData.dark(),
       home: BottomNavBar(),
       initialRoute: '/',
-      getPages: [
-        GetPage(name: '/favourite', page: () => FavoriteScreen()),
+      getPages: const [
+        // GetPage(name: '/favourite', page: () => FavoriteScreen()),
         // GetPage(name: '/download', page: () => DownloadScreen()),
       ],
     );

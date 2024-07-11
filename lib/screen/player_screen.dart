@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tanin/controllers/favorites_controller.dart';
 import '../controllers/music_controller.dart';
 import '../models/music_track.dart';
 import '../models/color_style.dart';
@@ -8,7 +7,7 @@ import '../models/color_style.dart';
 class PlayerScreen extends StatelessWidget {
   final MusicTrack musicTrack;
   final MusicController controller = Get.put(MusicController());
-  final FavoritesController favoritesController = Get.put(FavoritesController());
+  // final FavoritesController favoritesController = Get.put(FavoritesController());
 
   PlayerScreen({super.key, required this.musicTrack});
 
@@ -37,36 +36,34 @@ class PlayerScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
             Obx(() {
               final track = controller.currentTrack.value;
-              return ClipOval(
-                child: Image.network(
-                  track?.musicPoster ?? '',
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 200,
-                      width: 200,
-                      color: Colors.grey,
-                      child: const Icon(
-                        Icons.broken_image,
-                        color: Colors.white,
-                        size: 48,
-                      ),
-                    );
-                  },
-                ),
+              return Image.network(
+                track?.musicPoster ?? '',
+                height: 200,
+                width: 200,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 200,
+                    width: 200,
+                    color: Colors.grey,
+                    child: const Icon(
+                      Icons.broken_image,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  );
+                },
               );
             }),
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
             Obx(() {
               final track = controller.currentTrack.value;
               return Column(
                 children: [
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 32),
                   Text(
                     track?.title ?? '',
                     style: const TextStyle(
@@ -79,21 +76,21 @@ class PlayerScreen extends StatelessWidget {
               );
             }),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Obx(() => IconButton(
-                  icon: Icon(
-                    favoritesController.isFavorite.value ? Icons.favorite : Icons.favorite_border_sharp,
-                    color: favoritesController.isFavorite.value ? Colors.red : Colors.white,
-                  ),
-                  onPressed: () {
-                    favoritesController.toggleFavorite(musicTrack);
-                  },
-                )),
-              ],
-            ),
-            const SizedBox(height: 20),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     Obx(() => IconButton(
+            //       icon: Icon(
+            //         favoritesController.isFavorite.value ? Icons.favorite : Icons.favorite_border_sharp,
+            //         color: favoritesController.isFavorite.value ? Colors.red : Colors.white,
+            //       ),
+            //       onPressed: () {
+            //         favoritesController.toggleFavorite(musicTrack);
+            //       },
+            //     )),
+            //   ],
+            // ),
+            const SizedBox(height: 32),
             Obx(() {
               double currentPosition = controller.currentPosition.value.inSeconds.toDouble();
               double maxPosition = controller.totalDuration.value.inSeconds.toDouble();
@@ -123,7 +120,7 @@ class PlayerScreen extends StatelessWidget {
                 ),
               ],
             )),
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -167,7 +164,7 @@ class PlayerScreen extends StatelessWidget {
                 )),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
           ],
         ),
       ),
