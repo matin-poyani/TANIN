@@ -17,7 +17,7 @@ class ApiTracks extends GetxController {
   Map<String, List<MusicTrack>> get categoryTracks => _categoryTracks;
 
   List<MusicTrack> getCategoryTracks(String category) =>
-      _categoryTracks[category]?.take(10).toList() ?? [];
+      _categoryTracks[category]?.take(20).toList() ?? [];
 
   void setCategory(String category) {
     _currentCategory.value = category;
@@ -51,6 +51,10 @@ class ApiTracks extends GetxController {
             track = track.copyWith(title: TitleCleaner().cleanTitle(track.title)); // پاکسازی تایتل
             return track;
           }).toList();
+          
+          // فیلتر کردن ترک‌ها
+          tracks = tracks.where((track) => track.isValid()).toList();
+
           if (tracks.isEmpty) {
             hasMore.value = false;
           } else {
@@ -65,7 +69,7 @@ class ApiTracks extends GetxController {
       }
 
       _currentPage.value++;
-      return allTracks; // باید لیستی از ترک‌ها را برگرداند
+      return allTracks;
     } catch (e) {
       print('Error fetching tracks for categories: $e');
       rethrow;

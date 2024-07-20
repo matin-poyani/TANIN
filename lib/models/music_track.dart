@@ -6,42 +6,32 @@ class MusicTrack with ChangeNotifier {
   late final String title;
   final String description;
   String musicPoster;
-
   final List<DownloadMusic> downloadMusics;
-  
   final int categoryId;
   final String categoryName;
-
 
   MusicTrack({
     required this.musicId,
     required this.title,
-
     required this.description,
     required this.musicPoster,
-
     required this.downloadMusics,
     required this.categoryId,
     required this.categoryName,
-    
-  
   });
 
   factory MusicTrack.fromJson(Map<String, dynamic> json) {
     return MusicTrack(
       musicId: json['MusicId'] ?? 0,
       title: json['Title'] ?? '',
-      
       description: json['Description'] ?? '',
       musicPoster: json['MusicPoster'] ?? '',
- 
       downloadMusics: (json['DownloadMusics'] as List<dynamic>?)
               ?.map((downloadJson) => DownloadMusic.fromJson(downloadJson))
               .toList() ??
           [],
       categoryId: json['CateId'] ?? 0,
       categoryName: json['Name'] ?? '',
-
     );
   }
 
@@ -49,15 +39,11 @@ class MusicTrack with ChangeNotifier {
     return {
       'MusicId': musicId,
       'Title': title,
-
       'Description': description,
       'MusicPoster': musicPoster,
-
       'DownloadMusics': downloadMusics.map((e) => e.toJson()).toList(),
       'CateId': categoryId,
       'Name': categoryName,
-      
-
     };
   }
 
@@ -69,29 +55,25 @@ class MusicTrack with ChangeNotifier {
   MusicTrack copyWith({
     int? musicId,
     String? title,
-
     String? description,
     String? musicPoster,
-
     List<DownloadMusic>? downloadMusics,
-    // bool? downloaded,
     int? categoryId,
     String? categoryName,
-    // String? localPath,
   }) {
     return MusicTrack(
       musicId: musicId ?? this.musicId,
       title: title ?? this.title,
-
       description: description ?? this.description,
       musicPoster: musicPoster ?? this.musicPoster,
-
       downloadMusics: downloadMusics ?? this.downloadMusics,
-      
       categoryId: categoryId ?? this.categoryId,
       categoryName: categoryName ?? this.categoryName,
-      // localPath: localPath ?? this.localPath,
     );
+  }
+
+  bool isValid() {
+    return downloadMusics.any((dm) => dm.musicUrlLink.isNotEmpty);
   }
 
   @override
@@ -104,4 +86,3 @@ class MusicTrack with ChangeNotifier {
   @override
   int get hashCode => musicId.hashCode;
 }
-

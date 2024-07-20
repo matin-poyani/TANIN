@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -5,7 +6,6 @@ import '../models/music_track.dart';
 import '../models/title_cleaner.dart';
 
 class ApiExplore extends GetxController {
-  final _currentPage = 1.obs;
   final hasMore = true.obs;
   final isLoading = false.obs;
   final RxList<MusicTrack> _tracks = <MusicTrack>[].obs;
@@ -23,27 +23,30 @@ class ApiExplore extends GetxController {
 
     isLoading.value = true;
     if (isRefresh) {
-      _currentPage.value = 1;
       _tracks.clear();
       hasMore.value = true;
     }
 
     try {
-      final response = await http.get(Uri.parse('https://avvangmusic.ir/Api/Index?page=${_currentPage.value}'));
+      Random random = Random();
+      int randomPage = random.nextInt(600) + 1;
+
+      final response = await http.get(Uri.parse('https://avvangmusic.ir/Api/Index?page=$randomPage'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
         List<MusicTrack> fetchedTracks = data.map((e) {
           var track = MusicTrack.fromJson(e);
-          track = track.copyWith(title: TitleCleaner().cleanTitle(track.title)); // پاکسازی تایتل
+          track = track.copyWith(title: TitleCleaner().cleanTitle(track.title));
           return track;
         }).toList();
+
+        fetchedTracks = fetchedTracks.where((track) => track.isValid()).toList();
 
         if (fetchedTracks.isEmpty) {
           hasMore.value = false;
         } else {
           _tracks.addAll(fetchedTracks);
-          _currentPage.value++;
         }
       } else {
         print('Failed to load data: ${response.statusCode} - ${response.body}');

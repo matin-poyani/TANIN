@@ -94,7 +94,7 @@ class MusicController extends GetxController {
   void addRecentlyPlayedTrack(MusicTrack track) {
     if (!recentlyPlayedTracks.contains(track)) {
       recentlyPlayedTracks.add(track);
-      if (recentlyPlayedTracks.length > 10) {
+      if (recentlyPlayedTracks.length > 20) {
         recentlyPlayedTracks.removeAt(0);
       }
     }
