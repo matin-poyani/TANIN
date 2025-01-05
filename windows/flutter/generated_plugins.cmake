@@ -3,13 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-<<<<<<< HEAD
-=======
-  audioplayers_windows
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
-  connectivity_plus
   permission_handler_windows
-  url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

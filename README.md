@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 # taninnew
 
 music
-=======
-# tanin
-
-muisc
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
 
 ## Getting Started
 

@@ -1,0 +1,27 @@
+!@#$%FNARpoyani19981377
+
+
+PS G:\tanin> keytool -genkey -v -keystore release-key.keystore -alias release_key_alias -keyalg RSA -keysize 2048 -validity 10000
+Enter keystore password:  
+Re-enter new password: 
+What is your first and last name?
+  [Unknown]:  matin poyani
+What is the name of your organizational unit?
+  [Unknown]:  matin developer
+What is the name of your organization?
+  [Unknown]:  tanin music
+What is the name of your City or Locality?
+  [Unknown]:  kermanshah-iran
+What is the name of your State or Province?
+  [Unknown]:  kermanshah
+What is the two-letter country code for this unit?
+  [Unknown]:  98
+Is CN=matin poyani, OU=matin developer, O=tanin music, L=kermanshah-iran, ST=kermanshah, C=98 correct?
+  [no]:  yes
+
+Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) with a validity of 10,000 days
+        for: CN=matin poyani, OU=matin developer, O=tanin music, L=kermanshah-iran, ST=kermanshah, C=98
+Enter key password for <release_key_alias>
+        (RETURN if same as keystore password):  
+Re-enter new password: 
+[Storing release-key.keystore]

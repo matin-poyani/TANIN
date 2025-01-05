@@ -15,11 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33CC10EC2044A3C60003C045"
-<<<<<<< HEAD
                BuildableName = "taninnew.app"
-=======
-               BuildableName = "tanin.app"
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
                BlueprintName = "Runner"
                ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
@@ -35,11 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
-<<<<<<< HEAD
             BuildableName = "taninnew.app"
-=======
-            BuildableName = "tanin.app"
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
             BlueprintName = "Runner"
             ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
@@ -73,11 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
-<<<<<<< HEAD
             BuildableName = "taninnew.app"
-=======
-            BuildableName = "tanin.app"
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
             BlueprintName = "Runner"
             ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
@@ -94,11 +82,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
-<<<<<<< HEAD
             BuildableName = "taninnew.app"
-=======
-            BuildableName = "tanin.app"
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
             BlueprintName = "Runner"
             ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>

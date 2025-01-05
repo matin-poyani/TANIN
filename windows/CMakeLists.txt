@@ -1,18 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-<<<<<<< HEAD
 project(taninnew LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "taninnew")
-=======
-project(tanin LANGUAGES CXX)
-
-# The name of the executable created for the application. Change this to change
-# the on-disk name of your application.
-set(BINARY_NAME "tanin")
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

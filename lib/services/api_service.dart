@@ -1,218 +1,204 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import '../models/music_track.dart';
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:http/http.dart' as http;
+// import '../models/music_track.dart';
 
-class MusicApiService extends GetxController {
-  final RxList<MusicTrack> _musicTracks = <MusicTrack>[].obs;
-<<<<<<< HEAD
-  final RxMap<String, List<MusicTrack>> _categoryTracks = <String, List<MusicTrack>>{}.obs;
-  final RxList<String> _categories = <String>[].obs;
-  final RxList<String> _suggestions = <String>[].obs;
-  final RxString _searchValue = ''.obs;
-  final TextEditingController textEditingController = TextEditingController();
-  final RxList<String> searchHistory = ["Fall out boy", "Good girl"].obs;
-  final RxList<String> topSearches = ["Girl generation", "Imagine Dragons"].obs;
-  final RxList<MusicTrack> searchResults = <MusicTrack>[].obs;
-  final RxBool isLoading = false.obs;
-  final RxInt _currentPage = 1.obs;
-  final RxBool hasMore = true.obs;
+// class MusicApiService extends GetxController {
+//   final RxList<MusicTrack> _musicTracks = <MusicTrack>[].obs;
+//   final RxMap<String, List<MusicTrack>> _categoryTracks = <String, List<MusicTrack>>{}.obs;
+//   final RxList<String> _categories = <String>[].obs;
+//   // TODO: No work _suggestions
+//   final RxList<String> _suggestions = <String>[].obs;
+//   final RxString _searchValue = ''.obs;
+//   final TextEditingController textEditingController = TextEditingController();
+//   final RxList<String> searchHistory = ["Fall out boy", "Good girl"].obs;
+//   final RxList<String> topSearches = ["Girl generation", "Imagine Dragons"].obs;
+//   final RxList<MusicTrack> searchResults = <MusicTrack>[].obs;
+//   final RxBool isLoading = false.obs;
+//   final RxInt _currentPage = 1.obs;
+//   final RxBool hasMore = true.obs;
 
-  // کش برای داده‌های موزیک
-  final Map<String, List<MusicTrack>> _cachedCategoryTracks = {};
+//   // کش برای داده‌های موزیک
+//   final _cachedCategoryTracks = <String, List<MusicTrack>>{}.obs;
 
-  List<MusicTrack> get musicTracks => _musicTracks.toList();
-  List<String> get categories => _categories.toList();
-  List<String> get suggestions => _suggestions.toList();
-  String get searchValue => _searchValue.value;
-  Map<String, List<MusicTrack>> get categoryTracks => _categoryTracks;
+// final List<String> unwantedWords = [
+//     'دانلود آهنگ', 'آهنگ جدید', 'اصلی', 'MP3', 'کامل', 'با متن', 'کیفیت عالی',
+//     'آونگ موزیک', 'کیفیت بالا', 'با متن', 'آونگ موزیک', 'بالاترین کیفیت', 'بهترین کیفیت',
+//     'کیفیت عالی', 'دانلود', 'آهنگ', '128', '320 و', 'جدید', 'تکی و یکجا', 'آلبوم', 
+//     ' و|', '.', '+', '-', '(', ')', '[', ']', '{', '}', '/', '\\', '|', ':', ';', 
+//     'دو کیفیت' 
+//   ];
 
-  List<MusicTrack> getCategoryTracks(String category) => _categoryTracks[category]?.toList() ?? [];
+//   List<MusicTrack> get musicTracks => _musicTracks.toList();
+//   List<String> get categories => _categories.toList();
+//   List<String> get suggestions => _suggestions.toList();
+//   String get searchValue => _searchValue.value;
+//   Map<String, List<MusicTrack>> get categoryTracks => _categoryTracks;
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetchCategories();
-  }
+//   List<MusicTrack> getCategoryTracks(String category) => _categoryTracks[category]?.toList() ?? [];
 
-  Future<void> fetchCategories() async {
-    try {
-      final response = await http.get(Uri.parse('https://avvangmusic.ir/Api/Categorys'));
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        _categories.assignAll(data.map((e) => e['Name'].toString()).toList());
-        await fetchCategoryTracks();  // فراخوانی برای دریافت موزیک‌ها
-      } else {
-        throw Exception('Failed to load categories');
-      }
-    } catch (e) {
-      print('Error fetching categories: $e');
-      rethrow;
-    }
-  }
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     fetchCategories();
+//   }
 
-  Future<List<MusicTrack>> fetchCategoryTracks() async {
-    if (!hasMore.value) return [];
+//   Future<void> fetchCategories() async {
+//     try {
+//       final response = await http.get(Uri.parse('https://avvangmusic.ir/Api/Categorys'));
+//       if (response.statusCode == 200) {
+//         List<dynamic> data = json.decode(response.body);
+//         _categories.assignAll(data.map((e) => e['Name'].toString()).toList());
+//         await fetchCategoryTracks(); // فراخوانی برای دریافت موزیک‌ها
+//       } else {
+//         throw Exception('Failed to load categories');
+//       }
+//     } catch (e) {
+//       print('Error fetching categories: $e');
+//       rethrow;
+//     }
+//   }
 
-    try {
-      List<Future<http.Response>> futures = _categories.asMap().entries.map((entry) {
-        int index = entry.key;
-        String category = entry.value;
-        return http.get(Uri.parse('https://avvangmusic.ir/Api/musicCat/${index + 1}?page=${_currentPage.value}'));
-      }).toList();
+//   Future<List<MusicTrack>> fetchCategoryTracks() async {
+//     if (!hasMore.value) return [];
 
-      final responses = await Future.wait(futures);
+//     try {
+//       List<Future<http.Response>> futures = _categories.asMap().entries.map((entry) {
+//         int index = entry.key;
+//         return http.get(Uri.parse('https://avvangmusic.ir/Api/musicCat/${index + 1}?page=${_currentPage.value}'));
+//       }).toList();
 
-      List<MusicTrack> allTracks = [];
-      for (var i = 0; i < responses.length; i++) {
-        if (responses[i].statusCode == 200) {
-          List<dynamic> data = json.decode(responses[i].body);
-          List<MusicTrack> tracks = data.map((e) => MusicTrack.fromJson(e)).toList();
-          if (tracks.isEmpty) {
-            hasMore.value = false;
-          } else {
-            String category = _categories[i];
-            _categoryTracks[category] = (_categoryTracks[category] ?? []) + tracks;
-            _cachedCategoryTracks[category] = tracks;  // کش کردن داده‌های دریافت شده
-            allTracks.addAll(tracks);
-          }
-        } else {
-          throw Exception('Failed to load data for category ${_categories[i]}');
-        }
-      }
+//       final responses = await Future.wait(futures);
 
-      _currentPage.value++;
-      return allTracks;  // باید لیستی از ترک‌ها را برگرداند
-    } catch (e) {
-      print('Error fetching tracks for categories: $e');
-      rethrow;
-    }
-  }
+//       List<MusicTrack> allTracks = [];
+//       for (var i = 0; i < responses.length; i++) {
+//         if (responses[i].statusCode == 200) {
+//           List<dynamic> data = json.decode(responses[i].body);
+//           List<MusicTrack> tracks = data.map((e) {
+//             var track = MusicTrack.fromJson(e);
+//             track = track.copyWith(title: cleanTitle(track.title)); // پاکسازی تایتل
+//             return track;
+//           }).toList();
+//           if (tracks.isEmpty) {
+//             hasMore.value = false;
+//           } else {
+//             String category = _categories[i];
+//             _categoryTracks[category] = (_categoryTracks[category] ?? []) + tracks;
+//             _cachedCategoryTracks[category] = tracks; // کش کردن داده‌های دریافت شده
+//             allTracks.addAll(tracks);
+//           }
+//         } else {
+//           throw Exception('Failed to load data for category ${_categories[i]}');
+//         }
+//       }
 
-  Future<void> fetchSuggestions(String searchValue) async {
-    _searchValue.value = searchValue;
-    try {
-      List<MusicTrack> allTracks = [..._musicTracks, ..._categoryTracks.values.expand((x) => x)];
-      final List<MusicTrack> filteredTracks = allTracks
-          .where((track) => track.title.toLowerCase().contains(searchValue.toLowerCase()))
-          .toList();
-      _suggestions.assignAll(filteredTracks.map((track) => track.title).toList());
-      // searchResults.assignAll(filteredTracks);  // ذخیره کردن نتیجه جستجو
-    } catch (e) {
-      _suggestions.clear();
-      print('Error fetching suggestions: $e');
-      rethrow;
-    }
-  }
+//       _currentPage.value++;
+//       return allTracks; // باید لیستی از ترک‌ها را برگرداند
+//     } catch (e) {
+//       print('Error fetching tracks for categories: $e');
+//       rethrow;
+//     }
+//   }
 
+//   Future<void> fetchSuggestions(String searchValue) async {
+//     _searchValue.value = searchValue;
+//     try {
+//       List<MusicTrack> allTracks = [..._musicTracks, ..._categoryTracks.values.expand((x) => x)];
+//       final List<MusicTrack> filteredTracks = allTracks
+//           .where((track) => track.title.toLowerCase().contains(searchValue.toLowerCase()))
+//           .toList();
+//       // _suggestions.assignAll(filteredTracks.map((track) => track.title).toList());
+//       searchResults.assignAll(filteredTracks); // ذخیره کردن نتیجه جستجو
+//     } catch (e) {
+//       _suggestions.clear();
+//       print('Error fetching suggestions: $e');
+//       rethrow;
+//     }
+//   }
 
-=======
-  final RxList<String> _suggestions = <String>[].obs;
-  final RxString _searchValue = ''.obs;
-  final textEditingController = TextEditingController();
-  var searchHistory = ["Fall out boy", "Good girl"].obs;
-  var topSearches = ["Girl generation", "Imagine Dragons"].obs;
-  var searchResults = <MusicTrack>[].obs;
-  var isLoading = false.obs;
+//   Future<List<MusicTrack>> fetchData() async {
+//     if (!hasMore.value) return [];
 
-  List<MusicTrack> get musicTracks => _musicTracks.toList();
-  List<String> get suggestions => _suggestions.toList();
-  String get searchValue => _searchValue.value;
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
+//     try {
+//       List<Future<http.Response>> futures = _categories.asMap().entries.map((entry) {
+//         int index = entry.key;
+//         return http.get(Uri.parse('https://avvangmusic.ir/Api/musicCat/${index + 1}?page=${_currentPage.value}'));
+//       }).toList();
 
-  Future<List<MusicTrack>> fetchData() async {
-    try {
-      final response = await http.get(Uri.parse('https://avvangmusic.ir/api/index'));
-      if (response.statusCode == 200) {
-<<<<<<< HEAD
-        String responseBody = response.body;
-        print('Response body: $responseBody');
-        List<dynamic> data = json.decode(response.body);
-        print('Decoded JSON: $data');
-        List<MusicTrack> tracks = data.map((e) => MusicTrack.fromJson(e)).toList();
-        print('Parsed tracks: $tracks');
-        _musicTracks.assignAll(tracks);
-        print('Fetched ${tracks.length} tracks.');
-        return tracks;  // باید لیستی از ترک‌ها را برگرداند
-=======
-        List<dynamic> data = json.decode(response.body);
-        List<MusicTrack> tracks = data.map((e) => MusicTrack.fromJson(e)).toList();
-        _musicTracks.assignAll(tracks);
+//       final responses = await Future.wait(futures);
 
-        // Print URLs to console for verification
-        tracks.forEach((track) => print(track.musicPoster));
+//       List<MusicTrack> allTracks = [];
+//       for (var i = 0; i < responses.length; i++) {
+//         if (responses[i].statusCode == 200) {
+//           List<dynamic> data = json.decode(responses[i].body);
+//           List<MusicTrack> tracks = data.map((e) {
+//             var track = MusicTrack.fromJson(e);
+//             track = track.copyWith(title: cleanTitle(track.title)); // پاکسازی تایتل
+//             return track;
+//           }).toList();
+//           if (tracks.isEmpty) {
+//             hasMore.value = false;
+//           } else {
+//             String category = _categories[i];
+//             _categoryTracks[category] = (_categoryTracks[category] ?? []) + tracks;
+//             _cachedCategoryTracks[category] = tracks; // کش کردن داده‌های دریافت شده
+//             allTracks.addAll(tracks);
+//           }
+//         } else {
+//           throw Exception('Failed to load data for category ${_categories[i]}');
+//         }
+//       }
 
-        return tracks;
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
-      } else {
-        throw Exception('Failed to load data');
-      }
-    } catch (e) {
-<<<<<<< HEAD
-      print('Error fetching data: $e');
-      rethrow;
-    }
-  }
+//       _currentPage.value++;
+//       return allTracks; // باید لیستی از ترک‌ها را برگرداند
+//     } catch (e) {
+//       print('Error fetching tracks for categories: $e');
+//       rethrow;
+//     }
+//   }
 
-  Future<void> searchMusic(String query) async {
-    isLoading(true);
-    try {
-      final responses = await Future.wait([
-        http.get(Uri.parse('https://avvangmusic.ir/Api/Index?query=$query')),
-        http.get(Uri.parse('https://avvangmusic.ir/Api/Index?page=&query=$query')),
-        http.get(Uri.parse('https://avvangmusic.ir/Api/Categorys?query=$query')),
-      ]);
+//   Future<void> searchMusic(String query) async {
+//     isLoading(true);
+//     try {
+//       final responses = await Future.wait([
+//         http.get(Uri.parse('https://avvangmusic.ir/Api/Index?query=$query')),
+//         http.get(Uri.parse('https://avvangmusic.ir/Api/Index?page=&query=$query')),
+//         http.get(Uri.parse('https://avvangmusic.ir/Api/Categorys?query=$query')),
+//       ]);
 
-      final allData = responses
-          .where((response) => response.statusCode == 200)
-          .expand((response) {
-        List<dynamic> data = json.decode(response.body);
-        return data;
-      })
-          .toList();
+//       final allData = responses
+//           .where((response) => response.statusCode == 200)
+//           .expand((response) {
+//         List<dynamic> data = json.decode(response.body);
+//         return data;
+//       }).toList();
 
-      List<MusicTrack> tracks = allData.map((e) => MusicTrack.fromJson(e)).toList();
-      searchResults.value = tracks;
+//       List<MusicTrack> tracks = allData.map((e) => MusicTrack.fromJson(e)).toList();
+//       searchResults.value = tracks;
+//     } catch (e) {
+//       print('Error fetching search results: $e');
+//       rethrow;
+//     } finally {
+//       isLoading(false);
+//     }
+//   }
 
-    } catch (e) {
-      print('Error fetching search results: $e');
-      rethrow;
-=======
-      throw e;
-    }
-  }
+//   void clearCache() {
+//     _cachedCategoryTracks.clear();
+//   }
 
+//   void reset() {
+//     _currentPage.value = 1;
+//     hasMore.value = true;
+//     _cachedCategoryTracks.clear();
+//   }
 
-  Future<void> fetchSuggestions(String searchValue) async {
-    _searchValue.value = searchValue; // Update search value
-    try {
-      await fetchData(); // Ensure data is fetched
-      final List<String> titles = _musicTracks
-          .where((track) => track.title.toLowerCase().contains(searchValue.toLowerCase()))
-          .map((track) => track.title)
-          .toList();
-      _suggestions.assignAll(titles);
-    } catch (e) {
-      _suggestions.clear();
-    }
-  }
-
-  void searchMusic(String query) async {
-    isLoading(true);
-    try {
-      // Replace with your API endpoint
-      final response = await http.get(Uri.parse('https://avvangmusic.ir/api/index?query=$query'));
-
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        searchResults.value = data.map((e) => MusicTrack.fromJson(e)).toList();
-      } else {
-        print('Failed to load search results');
-      }
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
-    } finally {
-      isLoading(false);
-    }
-  }
-}
+//   // تابع برای پاکسازی تایتل‌ها
+//   String cleanTitle(String title) {
+//     for (String word in unwantedWords) {
+//       title = title.replaceAll(word, '');
+//     }
+//     return title.trim(); // حذف فضای خالی اضافی در ابتدا و انتهای رشته
+//   }
+// }

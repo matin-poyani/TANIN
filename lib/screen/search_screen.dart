@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tanin/services/api_suggestions.dart';
 import '../controllers/music_controller.dart';
 import '../models/music_track.dart';
 import '../models/color_style.dart';
-import '../services/api_service.dart';
 import 'Player_Screen.dart';
 
 class SearchScreen extends StatelessWidget {
-  final MusicApiService controller = Get.put(MusicApiService());
+  final ApiSuggestions controller = Get.put(ApiSuggestions());
   final MusicController musicController = Get.put(MusicController()); // Ensure the MusicController is available
   final ColorStyle colorStyle = const ColorStyle();
+
   SearchScreen({super.key});
 
   @override
@@ -21,6 +22,7 @@ class SearchScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorStyle.colorYellow),
           onPressed: () {
+            controller.stopSearching(); // متوقف کردن جستجو
             Get.back();
           },
         ),
@@ -40,10 +42,10 @@ class SearchScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ValueListenableBuilder<TextEditingValue>(
-                      valueListenable: controller.textEditingController,
+                      valueListenable: controller.textEditingController.value,
                       builder: (context, value, child) {
                         return TextField(
-                          controller: controller.textEditingController,
+                          controller: controller.textEditingController.value,
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Search',
@@ -54,81 +56,22 @@ class SearchScreen extends StatelessWidget {
                                 ? IconButton(
                                     icon: const Icon(Icons.clear, color: Colors.grey),
                                     onPressed: () {
-                                      controller.textEditingController.clear();
+                                      controller.textEditingController.value.clear();
                                       controller.suggestions.clear();
+                                      controller.stopSearching(); // متوقف کردن جستجو
                                     },
                                   )
                                 : null,
                           ),
                           onChanged: (query) {
-                            controller.fetchSuggestions(query);
-                          },
-                          onSubmitted: (query) {
-                            controller.searchMusic(query);
+                            controller.getSuggestions(query);
                           },
                         );
                       },
                     ),
                   ),
-                  Obx(() {
-                    if (controller.suggestions.isEmpty || controller.textEditingController.text.isEmpty) {
-                      return Container();
-                    }
-                    return Container(
-                      height: 200,
-                      margin: const EdgeInsets.only(top: 48.0), // Adjust this value based on your TextField height
-                      decoration: BoxDecoration(
-                        color: Colors.grey[800],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: controller.suggestions.length,
-                        itemBuilder: (context, index) {
-                          String suggestion = controller.suggestions[index];
-                          return ListTile(
-                            title: Text(suggestion, style: const TextStyle(color: Colors.white)),
-                            onTap: () async {
-                              // Find the selected track from the list of music tracks
-                              MusicTrack? selectedTrack = controller.musicTracks.firstWhereOrNull(
-                                (track) => track.title == suggestion,
-                              );
-                              if (selectedTrack != null) {
-                                musicController.setCurrentTrack(selectedTrack);
-                                Get.to(() => PlayerScreen(musicTrack: selectedTrack));
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    );
-                  }),
                 ],
               ),
-              const SizedBox(height: 20),
-              const Text('History', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 10),
-              Obx(() => Wrap(
-                spacing: 8.0,
-                children: controller.searchHistory
-                    .map((item) => Chip(
-                          label: Text(item, style: TextStyle(color: colorStyle.colorYellow)),
-                          backgroundColor: Colors.grey[800],
-                        ))
-                    .toList(),
-              )),
-              const SizedBox(height: 20),
-              const Text('Top searching', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 10),
-              Obx(() => Wrap(
-                spacing: 8.0,
-                children: controller.topSearches
-                    .map((item) => Chip(
-                          label: Text(item, style: const TextStyle(color: Colors.black)),
-                          backgroundColor: colorStyle.colorYellow,
-                        ))
-                    .toList(),
-              )),
               const SizedBox(height: 20),
               Obx(() {
                 if (controller.isLoading.value) {

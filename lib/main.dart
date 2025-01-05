@@ -1,27 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-<<<<<<< HEAD
+import 'package:tanin/services/api_categories.dart';
+import 'package:tanin/services/api_explore.dart';
+import 'package:tanin/services/api_suggestions.dart';
+import 'package:tanin/services/api_tracks.dart';
+import 'controllers/downloadcontroller.dart';
 import 'controllers/music_controller.dart';
-// import 'screen/download_screen.dart';
-import 'screen/favorite_screen.dart';
-import 'services/api_service.dart';
+import 'screen/download_screen .dart';
 import 'widget/bottom_nav_bar.dart';
 
 void main() {
- WidgetsFlutterBinding.ensureInitialized();
-  Get.put(MusicApiService());
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.put(ApiCategories());
+  Get.put(ApiTracks());
+  Get.put(ApiExplore());
+  Get.put(ApiSuggestions());
   Get.put(MusicController());
-=======
-
-import 'widget/bottom_nav_bar.dart';
-
-void main() {
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
-  runApp(const MusicApp());
+  Get.put(DownloadController());
+  runApp(const MyApp());
 }
 
-class MusicApp extends StatelessWidget {
-  const MusicApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+   final ApiTracks apiTracks = Get.put(ApiTracks());
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
+      apiTracks.clearCache();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +55,11 @@ class MusicApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
       home: BottomNavBar(),
-<<<<<<< HEAD
-        initialRoute: '/',
+      initialRoute: '/',
       getPages: [
-        GetPage(name: '/favourite', page: () => FavoriteScreen()),
-        // GetPage(name: '/download', page: () => DownloadScreen()),
+        // GetPage(name: '/favourite', page: () => FavoriteScreen()),
+        GetPage(name: '/download', page: () => DownloadScreen()),
       ],
-=======
->>>>>>> 1bcdb9e345d239daeed9a727f023a8843cb8a9ad
     );
   }
 }

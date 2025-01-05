@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:tanin/models/music_track.dart';
-import '../services/api_service.dart';
+import 'package:tanin/services/api_tracks.dart';
 
 class AccountController extends GetxController {
   var playlists = 22.obs;
@@ -11,7 +11,7 @@ class AccountController extends GetxController {
   var musicTracks = <MusicTrack>[].obs;
   var isLoading = true.obs;
 
-  final MusicApiService musicApiService = Get.put(MusicApiService());
+  final ApiTracks apiTracks = Get.put(ApiTracks());
 
   @override
   void onInit() {
@@ -22,7 +22,7 @@ class AccountController extends GetxController {
   void fetchMusicTracks() async {
     try {
       isLoading(true);
-      var tracks = await musicApiService.fetchData(); // انتظار داریم لیستی از ترک‌ها را برگرداند
+      var tracks = await apiTracks.fetchCategoryTracks(); // انتظار داریم لیستی از ترک‌ها را برگرداند
       musicTracks.assignAll(tracks);
     } finally {
       isLoading(false);

@@ -10,6 +10,7 @@ class AccountScreen extends StatelessWidget {
 
   AccountScreen({super.key});
 
+  // @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,33 +21,41 @@ class AccountScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
+              const SizedBox(height: 2),
               const Divider(color: Colors.white24),
-              const SizedBox(height: 16),
-              const Text(
-                'Library',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+              const SizedBox(height: 2),
+              // const Text(
+              //   'Library',
+              //   style: TextStyle(color: Colors.white, fontSize: 16),
+              // ),
+              const SizedBox(height: 2),
+              // _buildLibraryItem(Icons.favorite, 'Favourite', '/favourite'),
+              _buildLibraryItem(Icons.download, 'موزیک های دانلود شده', '/download'),
+              const SizedBox(height: 2),
+             const Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'موزیک های اخیر',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  textDirection: TextDirection.rtl,
+                ),
               ),
-              const SizedBox(height: 8),
-              _buildLibraryItem(Icons.favorite, 'Favourite', '/favourite'),
-              // _buildLibraryItem(Icons.download, 'Download', '/download'),
               const SizedBox(height: 16),
-              const Text(
-                'Recently Music',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-              const SizedBox(height: 8),
               Obx(() {
                 if (musicController.recentlyPlayedTracks.isEmpty) {
-                  return const Center(
-                    
+                  return const Align(
+                    alignment: Alignment.center,
                     child: Text(
-                      'No Recently Muisc',
+                      'موزیکی وجود ندارد',
                       style: TextStyle(color: Colors.white),
+                      // textDirection: TextDirection.rtl,
                     ),
                   );
                 } else {
-                  return buildRecentActivity(musicController: musicController, tracks: musicController.recentlyPlayedTracks);
+                  return buildRecentActivity(
+                    musicController: musicController, 
+                    tracks: musicController.recentlyPlayedTracks,
+                  );
                 }
               }),
             ],
@@ -55,7 +64,7 @@ class AccountScreen extends StatelessWidget {
       ),
     );
   }
-
+}
   Widget _buildLibraryItem(IconData icon, String title, String route) {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
@@ -66,5 +75,5 @@ class AccountScreen extends StatelessWidget {
       },
     );
   }
-}
+
 
