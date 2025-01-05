@@ -23,7 +23,7 @@ class TitleCleaner {
     // جدا کردن نام خواننده و نام آهنگ بر اساس یک قاعده مشخص
     List<String> parts = cleanedTitle.split(' ');
     if (parts.length > 1) {
-      return parts[0] + ' ' + parts[1]; // فرض می‌کنیم که قسمت اول نام خواننده و قسمت دوم نام آهنگ است
+      return '${parts[0]} ${parts[1]}'; // فرض می‌کنیم که قسمت اول نام خواننده و قسمت دوم نام آهنگ است
     }
     return cleanedTitle;
   }

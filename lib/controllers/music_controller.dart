@@ -1,12 +1,14 @@
+import 'dart:io';
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:audiotagger/audiotagger.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import '../models/color_style.dart';
 import '../models/music_track.dart';
 import '../services/api_categories.dart';
 import '../services/api_explore.dart';
 import '../services/api_tracks.dart';
+import '../widget/snackbar_helper.dart';
+import 'downloadcontroller.dart';
 
 class MusicController extends GetxController {
   var musicTracks = <MusicTrack>[].obs;
@@ -25,6 +27,11 @@ class MusicController extends GetxController {
   final ApiTracks apiTracks = Get.put(ApiTracks());
   final ApiExplore apiExplore = Get.put(ApiExplore());
   var categories = <String>[].obs;
+  var currentTitle = ''.obs;
+  var isOfflineMode = false.obs; // Determine whether playback is offline
+   final DownloadController downloadController = Get.find();
+     final RxList<MusicTrack> onlinePlaylist = <MusicTrack>[].obs;
+  final RxList<MusicTrack> offlinePlaylist = <MusicTrack>[].obs;
 
   @override
   void onInit() {
@@ -32,23 +39,27 @@ class MusicController extends GetxController {
     fetchMusicTracks();
     audioPlayer.positionStream.listen((position) {
       currentPosition.value = position;
+      update();
     });
     audioPlayer.durationStream.listen((duration) {
       totalDuration.value = duration ?? Duration.zero;
+      update();
     });
     audioPlayer.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
       if (state.processingState == ProcessingState.completed) {
         _handleCompletion();
       }
+      update();
     });
   }
 
   Future<void> fetchMusicTracks() async {
     try {
       await apiCategories.fetchCategories();
-      var categoryTracks = apiTracks.categoryTracks; // استفاده از getter عمومی
-      musicTracks.assignAll(categoryTracks.values.expand((tracks) => tracks).toList());
+      var categoryTracks = apiTracks.categoryTracks;
+      musicTracks
+          .assignAll(categoryTracks.values.expand((tracks) => tracks).toList());
       categories.assignAll(apiCategories.categories);
     } catch (e) {
       print('Error fetching music tracks: $e');
@@ -59,23 +70,80 @@ class MusicController extends GetxController {
     return apiTracks.getCategoryTracks(category);
   }
 
-  Future<void> playMusic(String musicUrlLink, {bool seekToCurrentPosition = false}) async {
+  void updateTitle(String filePath) async {
+    final tagger = Audiotagger();
+    final tags = await tagger.readTags(path: filePath);
+    if (tags != null && tags.title != null && tags.title!.isNotEmpty) {
+      currentTitle.value = tags.title!;
+    } else {
+      currentTitle.value = currentTrack.value?.title ?? 'Unknown Title';
+    }
+    update(); // اطمینان حاصل کنید که ویجت‌ها به‌روزرسانی می‌شوند
+  }
+
+  Future<void> playMusic(String musicUrlLink,
+      {bool seekToCurrentPosition = false, MusicTrack? track}) async {
     try {
-      print('Playing music: $musicUrlLink');
-      if (currentTrack.value?.downloadMusics.first.musicUrlLink != musicUrlLink) {
-        currentTrack.value = musicTracks.firstWhere((track) => track.downloadMusics.first.musicUrlLink == musicUrlLink);
+      if (track != null) {
+        currentTrack.value = track;
+        if (!musicUrlLink.startsWith('file://')) {
+          currentTitle.value =
+              track.title; // به‌روزرسانی عنوان برای موزیک‌های آنلاین
+        } else {
+          updateTitle(track.downloadMusics.first
+              .musicUrlLink); // به‌روزرسانی عنوان برای موزیک‌های آفلاین
+        }
+        update(); // اطمینان از به‌روزرسانی ویجت‌ها
       }
-      if (!seekToCurrentPosition) {
-        await audioPlayer.setUrl(musicUrlLink);
+      if (musicUrlLink.startsWith('file://')) {
+        final localFilePath = musicUrlLink.replaceFirst('file://', '');
+        if (!File(localFilePath).existsSync()) {
+          print('File does not exist: $localFilePath');
+          return;
+        }
+        await audioPlayer.setFilePath(localFilePath);
+        updateTitle(localFilePath); // به‌روزرسانی عنوان برای فایل‌های آفلاین
       } else {
+        await audioPlayer.setUrl(musicUrlLink);
+      }
+      if (seekToCurrentPosition && currentPosition.value != Duration.zero) {
         await audioPlayer.seek(currentPosition.value);
       }
-      await audioPlayer.play();
+      if (!isPlaying.value) {
+        await audioPlayer.play();
+      }
       isPlaying.value = true;
       isMiniPlayerVisible.value = true;
-      isFavorite.value = favoriteTracks.contains(currentTrack.value);
+      update(); // اطمینان از به‌روزرسانی ویجت‌ها
     } catch (e) {
       print('Error playing music: $e');
+    }
+  }
+
+  void setCurrentTrack(MusicTrack track) {
+    currentTrack.value = track;
+    updateTitle(track.downloadMusics.first
+        .musicUrlLink); // به‌روزرسانی عنوان برای موزیک‌های آفلاین
+    playMusic(track.downloadMusics.first.musicUrlLink,
+        track: track, seekToCurrentPosition: true);
+    if (!recentlyPlayedTracks.contains(track)) {
+      recentlyPlayedTracks.add(track);
+    }
+    update(); // به‌روزرسانی ویجت‌ها
+  }
+
+  Future<void> _getTrackMetadata(String filePath) async {
+    try {
+      final tagger = Audiotagger();
+      final metadata = await tagger.readTags(path: filePath);
+      if (currentTrack.value != null) {
+        currentTrack.value = currentTrack.value!.copyWith(
+          title: metadata?.title ?? currentTrack.value!.title,
+        );
+        update();
+      }
+    } catch (e) {
+      print('Error reading metadata: $e');
     }
   }
 
@@ -100,20 +168,26 @@ class MusicController extends GetxController {
     }
   }
 
-  void setCurrentTrack(MusicTrack track) {
-    print('Setting current track: ${track.title}');
-    currentTrack.value = track;
-    playMusic(track.downloadMusics.first.musicUrlLink);
-    addRecentlyPlayedTrack(track);
-  }
-
   void togglePlayPause() async {
     if (isPlaying.value) {
-      pauseMusic();
+      await audioPlayer.pause();
+      isPlaying.value = false;
     } else {
       if (currentTrack.value != null) {
-        await playMusic(currentTrack.value!.downloadMusics.first.musicUrlLink, seekToCurrentPosition: true);
+        await audioPlayer.play();
+        isPlaying.value = true;
       }
+    }
+    update();
+  }
+
+  void _handleCompletion() {
+    if (isRepeat.value) {
+      playMusic(currentTrack.value!.downloadMusics.first.musicUrlLink);
+    } else if (isShuffle.value) {
+      playRandomTrack();
+    } else {
+      playNextTrack();
     }
   }
 
@@ -122,13 +196,16 @@ class MusicController extends GetxController {
       return apiTracks.getCategoryTracks(category).contains(currentTrack.value);
     });
 
-    final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
+    final tracks = currentCategory != null
+        ? getCategoryTracks(currentCategory)
+        : musicTracks;
     final currentIndex = tracks.indexOf(currentTrack.value!);
-    final nextIndex = (currentIndex + 1) % tracks.length;  // Move to next track
+    final nextIndex = (currentIndex + 1) % tracks.length; // Move to next track
     final nextTrack = tracks[nextIndex];
 
     setCurrentTrack(nextTrack);
-    await playMusic(nextTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
+    await playMusic(nextTrack.downloadMusics.first.musicUrlLink,
+        seekToCurrentPosition: false);
   }
 
   void playPreviousTrack() async {
@@ -136,13 +213,17 @@ class MusicController extends GetxController {
       return apiTracks.getCategoryTracks(category).contains(currentTrack.value);
     });
 
-    final tracks = currentCategory != null ? getCategoryTracks(currentCategory) : musicTracks;
+    final tracks = currentCategory != null
+        ? getCategoryTracks(currentCategory)
+        : musicTracks;
     final currentIndex = tracks.indexOf(currentTrack.value!);
-    final previousIndex = (currentIndex - 1 + tracks.length) % tracks.length;  // Move to previous track
+    final previousIndex = (currentIndex - 1 + tracks.length) %
+        tracks.length; // Move to previous track
     final previousTrack = tracks[previousIndex];
 
     setCurrentTrack(previousTrack);
-    await playMusic(previousTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
+    await playMusic(previousTrack.downloadMusics.first.musicUrlLink,
+        seekToCurrentPosition: false);
   }
 
   void playRandomTrack() async {
@@ -154,25 +235,12 @@ class MusicController extends GetxController {
     final randomTrack = musicTracks[randomIndex];
     print('Playing random track: ${randomTrack.title}');
     setCurrentTrack(randomTrack);
-    await playMusic(randomTrack.downloadMusics.first.musicUrlLink, seekToCurrentPosition: false);
+    await playMusic(randomTrack.downloadMusics.first.musicUrlLink,
+        seekToCurrentPosition: false);
   }
 
   void seekTo(Duration position) {
     audioPlayer.seek(position);
-  }
-
-  void _handleCompletion() {
-    if (isRepeat.value) {
-      print('Repeat mode is on, repeating the current track.');
-      playMusic(currentTrack.value!.downloadMusics.first.musicUrlLink);
-    } else if (isShuffle.value) {
-      print('Shuffle mode is on, playing random track.');
-      print('Total tracks available: ${musicTracks.length}');
-      playRandomTrack();
-    } else {
-      print('Playing next track.');
-      playNextTrack();
-    }
   }
 
   void toggleRepeat() {
@@ -180,21 +248,8 @@ class MusicController extends GetxController {
     if (isRepeat.value) {
       isShuffle.value = false;
     }
-    Get.snackbar(
-      '',
-      '',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const ColorStyle().colorDark,
-      colorText: Colors.yellowAccent,
-      duration: const Duration(seconds: 3),
-      messageText: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Text(
-          isRepeat.value ? "این آهنگ تکرار خواهد شد" : "حالت تکرار غیرفعال شد",
-          style: TextStyle(color: const ColorStyle().colorYellow, fontSize: 16),
-        ),
-      ),
-    );
+    SnackbarHelper.showSnackbar(
+        isRepeat.value ? "این آهنگ تکرار خواهد شد" : "حالت تکرار غیرفعال شد");
   }
 
   void toggleShuffle() {
@@ -202,21 +257,9 @@ class MusicController extends GetxController {
     if (isShuffle.value) {
       isRepeat.value = false;
     }
-    Get.snackbar(
-      '',
-      '',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const ColorStyle().colorDark,
-      colorText: Colors.yellowAccent,
-      duration: const Duration(seconds: 3),
-      messageText: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Text(
-          isShuffle.value ? "آهنگ‌ها به صورت تصادفی پخش می‌شوند" : "حالت تصادفی غیرفعال شد",
-          style: TextStyle(color: const ColorStyle().colorYellow, fontSize: 16),
-        ),
-      ),
-    );
+    SnackbarHelper.showSnackbar(isShuffle.value
+        ? "آهنگ‌ها به صورت تصادفی پخش می‌شوند"
+        : "حالت تصادفی غیرفعال شد");
   }
 
   @override

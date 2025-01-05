@@ -4,7 +4,9 @@ import 'package:tanin/services/api_categories.dart';
 import 'package:tanin/services/api_explore.dart';
 import 'package:tanin/services/api_suggestions.dart';
 import 'package:tanin/services/api_tracks.dart';
+import 'controllers/downloadcontroller.dart';
 import 'controllers/music_controller.dart';
+import 'screen/download_screen .dart';
 import 'widget/bottom_nav_bar.dart';
 
 void main() {
@@ -14,6 +16,7 @@ void main() {
   Get.put(ApiExplore());
   Get.put(ApiSuggestions());
   Get.put(MusicController());
+  Get.put(DownloadController());
   runApp(const MyApp());
 }
 
@@ -53,9 +56,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: ThemeData.dark(),
       home: BottomNavBar(),
       initialRoute: '/',
-      getPages: const [
+      getPages: [
         // GetPage(name: '/favourite', page: () => FavoriteScreen()),
-        // GetPage(name: '/download', page: () => DownloadScreen()),
+        GetPage(name: '/download', page: () => DownloadScreen()),
       ],
     );
   }

@@ -85,7 +85,7 @@ class CategoryAlbumsSection extends StatelessWidget {
                                     fit: StackFit.expand,
                                     children: [
                                       CachedNetworkImage(
-                                        imageUrl: track.musicPoster ?? 'Unknown Image Music',
+                                        imageUrl: track.musicPoster,
                                         fit: BoxFit.cover,
                                         placeholder: (context, url) => const Center(
                                           child: CircularProgressIndicator(),
@@ -106,7 +106,7 @@ class CategoryAlbumsSection extends StatelessWidget {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                track.title ?? 'Unknown Title',
+                                                track.title,
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12,

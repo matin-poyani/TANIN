@@ -5,6 +5,8 @@ import '../controllers/music_controller.dart';
 import '../models/color_style.dart';
 
 class ExploreSection extends StatefulWidget {
+  const ExploreSection({super.key});
+
   @override
   _ExploreSectionState createState() => _ExploreSectionState();
 }
@@ -49,7 +51,7 @@ class _ExploreSectionState extends State<ExploreSection> {
                   child: apiExplore.tracks.isEmpty && apiExplore.isLoading.value
                       ? const Center(child: CircularProgressIndicator())
                       : apiExplore.tracks.isEmpty
-                          ? Center(child: Text('No data available. Please try again later.', style: TextStyle(color: Colors.white)))
+                          ? const Center(child: Text('No data available. Please try again later.', style: TextStyle(color: Colors.white)))
                           : Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: GridView.count(

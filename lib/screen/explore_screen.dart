@@ -13,7 +13,7 @@ class ExploreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const ColorStyle().colorDark,
-      body: Stack(
+      body: const Stack(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

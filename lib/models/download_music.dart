@@ -1,37 +1,30 @@
 class DownloadMusic {
-
-  final String musicUrlLink;  // اضافه شده
-
+  final String title;
+  final String musicUrlLink;
+  final String? localPath; // مسیر محلی برای فایل دانلود شده
 
   DownloadMusic({
-  
-    required this.musicUrlLink,  
-
+    required this.title,
+    required this.musicUrlLink,
+    this.localPath,
   });
+
+  /// بررسی اینکه آیا موسیقی به صورت آفلاین موجود است یا خیر
+  bool get isOffline => localPath != null && localPath!.isNotEmpty;
 
   factory DownloadMusic.fromJson(Map<String, dynamic> json) {
     return DownloadMusic(
-     
-      musicUrlLink: json['MusicUrlLink'] ?? '',  
-
+      title: json['Title'] ?? '',
+      musicUrlLink: json['MusicUrlLink'] ?? '',
+      localPath: json['LocalPath'],  // مسیر محلی برای پخش آفلاین
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-    
-      'MusicUrlLink': musicUrlLink, 
-   
+      'Title': title,
+      'MusicUrlLink': musicUrlLink,
+      'LocalPath': localPath,
     };
-  }
-
-  DownloadMusic copyWith({
-
-    String? musicUrlLink,  
-
-  }) {
-    return DownloadMusic(
-      musicUrlLink: musicUrlLink ?? this.musicUrlLink, 
-    );
   }
 }

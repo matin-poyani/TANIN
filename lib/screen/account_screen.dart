@@ -11,6 +11,7 @@ class AccountScreen extends StatelessWidget {
   AccountScreen({super.key});
 
   // @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0E0B29),
@@ -29,7 +30,7 @@ class AccountScreen extends StatelessWidget {
               // ),
               const SizedBox(height: 2),
               // _buildLibraryItem(Icons.favorite, 'Favourite', '/favourite'),
-              // _buildLibraryItem(Icons.download, 'Download', '/download'),
+              _buildLibraryItem(Icons.download, 'موزیک های دانلود شده', '/download'),
               const SizedBox(height: 2),
              const Align(
                 alignment: Alignment.centerRight,
@@ -64,15 +65,15 @@ class AccountScreen extends StatelessWidget {
     );
   }
 }
-  // Widget _buildLibraryItem(IconData icon, String title, String route) {
-  //   return ListTile(
-  //     leading: Icon(icon, color: Colors.white),
-  //     title: Text(title, style: const TextStyle(color: Colors.white)),
-  //     trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
-  //     onTap: () {
-  //       Get.toNamed(route);
-  //     },
-  //   );
-  // }
+  Widget _buildLibraryItem(IconData icon, String title, String route) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
+      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+      onTap: () {
+        Get.toNamed(route);
+      },
+    );
+  }
 
 
