@@ -8,7 +8,6 @@ import '../services/api_categories.dart';
 import '../services/api_explore.dart';
 import '../services/api_tracks.dart';
 import '../widget/snackbar_helper.dart';
-import 'downloadcontroller.dart';
 
 class MusicController extends GetxController {
   var musicTracks = <MusicTrack>[].obs;
@@ -28,10 +27,6 @@ class MusicController extends GetxController {
   final ApiExplore apiExplore = Get.put(ApiExplore());
   var categories = <String>[].obs;
   var currentTitle = ''.obs;
-  var isOfflineMode = false.obs; // Determine whether playback is offline
-   final DownloadController downloadController = Get.find();
-     final RxList<MusicTrack> onlinePlaylist = <MusicTrack>[].obs;
-  final RxList<MusicTrack> offlinePlaylist = <MusicTrack>[].obs;
 
   @override
   void onInit() {
@@ -93,7 +88,6 @@ class MusicController extends GetxController {
           updateTitle(track.downloadMusics.first
               .musicUrlLink); // به‌روزرسانی عنوان برای موزیک‌های آفلاین
         }
-        update(); // اطمینان از به‌روزرسانی ویجت‌ها
       }
       if (musicUrlLink.startsWith('file://')) {
         final localFilePath = musicUrlLink.replaceFirst('file://', '');
@@ -109,12 +103,13 @@ class MusicController extends GetxController {
       if (seekToCurrentPosition && currentPosition.value != Duration.zero) {
         await audioPlayer.seek(currentPosition.value);
       }
+      // مطمئن شوید که تنها در صورتی پخش شروع شود که موزیک در حال پخش نباشد
       if (!isPlaying.value) {
         await audioPlayer.play();
       }
       isPlaying.value = true;
       isMiniPlayerVisible.value = true;
-      update(); // اطمینان از به‌روزرسانی ویجت‌ها
+      update();
     } catch (e) {
       print('Error playing music: $e');
     }
@@ -129,7 +124,7 @@ class MusicController extends GetxController {
     if (!recentlyPlayedTracks.contains(track)) {
       recentlyPlayedTracks.add(track);
     }
-    update(); // به‌روزرسانی ویجت‌ها
+    update(); // اطمینان حاصل کنید که ویجت‌ها به‌روزرسانی می‌شوند
   }
 
   Future<void> _getTrackMetadata(String filePath) async {

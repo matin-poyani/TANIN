@@ -6,7 +6,7 @@ import 'player_screen.dart';
 
 class DownloadScreen extends StatelessWidget {
   final DownloadController downloadedMusicController =
-      Get.put(DownloadController());
+  Get.put(DownloadController());
   final TextEditingController searchController = TextEditingController();
 
   DownloadScreen({super.key}) {
@@ -20,7 +20,7 @@ class DownloadScreen extends StatelessWidget {
 
   Future<void> _loadDownloadedTracks() async {
     downloadedMusicController.downloadedMusic.value =
-        await downloadedMusicController.getAllDownloadedMusic();
+    await downloadedMusicController.getAllDownloadedMusic();
     downloadedMusicController.filteredTracks.value =
         downloadedMusicController.downloadedMusic;
   }
@@ -34,7 +34,7 @@ class DownloadScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('دانلود ها'),
+        title: const Text('Downloaded Music'),
         centerTitle: true,
         backgroundColor: const ColorStyle().colorDark,
         leading: IconButton(
@@ -61,7 +61,7 @@ class DownloadScreen extends StatelessWidget {
     return TextField(
       controller: searchController,
       decoration: InputDecoration(
-        hintText: 'جستجو',
+        hintText: 'Search in downloads...',
         hintStyle: const TextStyle(color: Colors.yellow),
         filled: true,
         fillColor: const ColorStyle().colorBlack,
@@ -160,26 +160,26 @@ class DownloadScreen extends StatelessWidget {
               snackPosition: SnackPosition.BOTTOM,
             );
             break;
-          // case 'download':
-          //   // Implement download functionality here
-          //   Get.snackbar(
-          //     'Download',
-          //     'Downloading ${track.title}',
-          //     backgroundColor: Colors.green,
-          //     colorText: Colors.white,
-          //     snackPosition: SnackPosition.BOTTOM,
-          //   );
-          //   break;
-          // case 'share':
-          //   // Implement share functionality here
-          //   Get.snackbar(
-          //     'Share',
-          //     'Sharing ${track.title}',
-          //     backgroundColor: Colors.blue,
-          //     colorText: Colors.white,
-          //     snackPosition: SnackPosition.BOTTOM,
-          //   );
-          //   break;
+          case 'download':
+          // Implement download functionality here
+            Get.snackbar(
+              'Download',
+              'Downloading ${track.title}',
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            break;
+          case 'share':
+          // Implement share functionality here
+            Get.snackbar(
+              'Share',
+              'Sharing ${track.title}',
+              backgroundColor: Colors.blue,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            break;
         }
       },
       itemBuilder: (BuildContext context) {
@@ -188,14 +188,14 @@ class DownloadScreen extends StatelessWidget {
             value: 'delete',
             child: Text('Delete'),
           ),
-          // const PopupMenuItem<String>(
-          //   value: 'download',
-          //   child: Text('Download'),
-          // ),
-          // const PopupMenuItem<String>(
-          //   value: 'share',
-          //   child: Text('Share'),
-          // ),
+          const PopupMenuItem<String>(
+            value: 'download',
+            child: Text('Download'),
+          ),
+          const PopupMenuItem<String>(
+            value: 'share',
+            child: Text('Share'),
+          ),
         ];
       },
     );

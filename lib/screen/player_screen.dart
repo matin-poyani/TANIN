@@ -18,13 +18,16 @@ class PlayerScreen extends StatelessWidget {
       final file =
           await downloadController.getDownloadedMusic(musicTrack.title);
       if (file != null) {
+        // اطمینان حاصل کنید که موزیک‌های آفلاین به درستی پخش می‌شوند
         await controller.playMusic('file://${file.path}',
             seekToCurrentPosition: true);
-        controller.updateTitle(file.path);
+        controller.updateTitle(
+            file.path); // به‌روزرسانی عنوان و تصویر برای موزیک آفلاین
       } else if (musicTrack.downloadMusics.isNotEmpty) {
         await controller.playMusic(musicTrack.downloadMusics.first.musicUrlLink,
             seekToCurrentPosition: true);
-        controller.updateTitle(musicTrack.downloadMusics.first.musicUrlLink);
+        controller.updateTitle(musicTrack.downloadMusics.first
+            .musicUrlLink); // به‌روزرسانی عنوان و تصویر برای موزیک آنلاین
       } else {
         Get.snackbar(
           "Error",
@@ -125,18 +128,18 @@ class PlayerScreen extends StatelessWidget {
       children: [
         _buildDownloadButton(),
         const SizedBox(width: 20),
-        // IconButton(
-        //   icon: const Icon(Icons.share, color: Colors.white, size: 32),
-        //   onPressed: () {
-        //     Get.snackbar(
-        //       "Share",
-        //       "Sharing ${musicTrack.title}",
-        //       backgroundColor: Colors.blue,
-        //       colorText: Colors.white,
-        //       snackPosition: SnackPosition.BOTTOM,
-        //     );
-        //   },
-        // ),
+        IconButton(
+          icon: const Icon(Icons.share, color: Colors.white, size: 32),
+          onPressed: () {
+            Get.snackbar(
+              "Share",
+              "Sharing ${musicTrack.title}",
+              backgroundColor: Colors.blue,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          },
+        ),
       ],
     );
   }
